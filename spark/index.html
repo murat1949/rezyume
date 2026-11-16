@@ -1,0 +1,389 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Один день между «отгрузили» и «доставили» · Мурат Накупов для Spark</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#E9E6DD;font-family:"Segoe UI",Arial,sans-serif;color:#17324F;overflow:hidden}
+#wrap{position:absolute;left:50%;top:50%;width:1280px;height:760px;transform-origin:center center}
+#sheet{position:absolute;inset:0 0 70px 0;background-color:#FBFAF6;border:2px solid #17324F;border-radius:6px;
+background-image:linear-gradient(#E3EBF4 1px,transparent 1px),linear-gradient(90deg,#E3EBF4 1px,transparent 1px);background-size:24px 24px;overflow:hidden}
+#sheet:before{content:"";position:absolute;inset:10px;border:1px solid #9FB3C8;pointer-events:none}
+#left{position:absolute;left:44px;top:40px;width:500px;bottom:40px}
+.kick{font-size:13px;letter-spacing:2px;font-weight:800;color:#E8642C;text-transform:uppercase}
+.lead{font-size:26px;font-weight:800;line-height:1.22;margin-top:12px;color:#17324F}
+.bd p{font-size:16.8px;line-height:1.5;color:#33465C;margin:10px 0 0}
+.bd b{color:#17324F}
+.quote{margin-top:16px;border-left:6px solid #E8642C;background:#FFF3EC;padding:14px 18px;font-size:19px;line-height:1.4;font-weight:600;color:#17324F}
+.quote small{display:block;margin-top:8px;font-size:13px;font-weight:600;color:#7a8796}
+#right{position:absolute;left:560px;top:16px;width:700px;height:618px}
+#right svg{width:100%;height:100%}
+#stamp{position:absolute;right:10px;bottom:10px;z-index:5;border:1px solid #17324F;background:#FBFAF6;font-size:11px;display:grid;grid-template-columns:86px 250px 96px;}
+#stamp div{border:0.5px solid #9FB3C8;padding:3px 7px;white-space:nowrap}
+#stamp .h{font-weight:800}
+.ctl{position:absolute;left:0;right:0;bottom:0;height:56px;display:flex;align-items:center;justify-content:space-between}
+.b{border:2px solid #17324F;background:#FBFAF6;color:#17324F;font-size:17px;font-weight:700;padding:10px 22px;border-radius:8px;cursor:pointer}
+.b.go{background:#E8642C;border-color:#E8642C;color:#fff}
+#dots{display:flex;gap:6px}
+#dots i{width:10px;height:10px;border-radius:50%;background:#C9D3DE;display:block}
+#dots i.on{background:#E8642C}#dots i.done{background:#7FA3C6}
+.big{font-size:86px;font-weight:900;line-height:1}
+.vb{display:inline-block;border:2px solid #17324F;border-radius:10px;padding:9px 14px;margin:6px 6px 0 0;font-size:15.5px;font-weight:700;cursor:pointer;background:#fff;user-select:none}
+.vb.on{background:#17324F;color:#fff}
+.res{margin-top:14px;font-size:18px;line-height:1.45}
+.res .t{font-size:30px;font-weight:900}
+.f{font-family:"Cambria Math","Times New Roman",serif;font-size:21px;background:#fff;border:1px solid #9FB3C8;border-radius:8px;padding:12px 16px;margin-top:10px;line-height:1.6}
+.wa{display:inline-block;background:#25D366;color:#fff;text-decoration:none;font-weight:800;padding:12px 20px;border-radius:10px;font-size:17px}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.ani{animation:pop .5s both}
+</style></head><body>
+<div id="wrap">
+ <div id="sheet">
+  <div id="left"></div>
+  <div id="right"><svg id="sv" viewBox="0 0 700 630"></svg></div>
+  <iframe id="ifr" style="position:absolute;inset:0;width:100%;height:100%;border:0;display:none;background:#FBFAF6"></iframe>
+  <div id="stamp"><div class="h">Разработал</div><div>Накупов М. · инженер-системотехник</div><div class="h">Spark</div><div class="h">Тема</div><div id="st-t">Путь заказа</div><div id="st-n">Лист 1</div></div>
+ </div>
+ <div class="ctl"><button class="b" onclick="go(-1)">← Назад</button><div id="dots"></div><button class="b go" onclick="go(1)">Дальше →</button></div>
+</div>
+<script>
+const FACE='data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCADwAPADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD5P7UhpaK9k8wBRRSimK4DpR3oFLQIKMUCloC4lJgU7Gadt9qLCuR44owc1Jt4o2miwXGjpSY5p+2jbTsK4zHpRT8CkxSsO4gpO1KRiigLiYo70tHHpQFw7UmKWigBoop2KTFAxp5ox70pFJigYmKCKWjFIAHSkxS9BQelAxQKUCgdaBinYm4YFBFLRQK4CilxSgGnYTYlKBTgtSKlNIlyGBacEz2rqfhz4F8Q+PdeXRvDti9xN96aUgiKBf7zt0Ufqe1fV3wv/Zb8NaH5OoeMro6/fAbjaqNloh/9Cf8AHA9qzqVoU9y6dKc9j5D8MeE/EfiadIdC0W9v9zhN8URKAn1boK9P0T9mX4lalp8d3JFpmns5IEF1cESqPUgAgfTrX3TYWdlp1nHZWNtb2lrGMJDBGERR7AcVISp4GPwNcc8ZLojrjhEtz41k/ZL8VGON4/EmmKSP3izQuCp7425BH61nap+zF4h0/l9aiulIPzW1oxCn3BOfyr7ZZWx1/A1E8CS8EDI7VH1uoV9Wgfmv4j8Ca9oj3AltxcJbNiUxKwZPdkYBgPfpXLshxnFfpxrfh/Tr9MXtjDLj7rlMsv49a8J+K/wF03WreS60G1sdMvEcvvt1YLMD13KOh+grenjIvSRjPCyWsT46K9qYQa7Dxl4F1jw7qEtrI8N6YkEhMAYNsPR9jANj3AOO9cmRXVFqWqOZ3TsyPHtRinkUmO9MLjKKUiigdxKKUUHrQO43GaOcUuKMUrBcQUEc0dKUUWC400lK1IKBj6MUCimIUdaUCgCnqvNMlsaFqRVz2p6JntXpPwf+DXjD4j3Ky6baGx0kH95ql0hEI9k7yN7Lx6kUNxgrtiScnZHndnaz3NxHb20Mk00p2xxxoWZz6ADk19M/B39l26v47bWPiFPLY2zgONKhO2dh2Erfwe4HPuK95+EXwh8JfDS0DabAb7VXXE+p3Cgyt7IOka+w59Sa7+RyeB+VcFbFt6QO2lhUtZGd4a0TRPDOkRaToGmWum2UX3YbeMKCfU92PucmrryM/Qj86a4YnGP/AK1KEjVcEjA5xngV58pa3Z2xj2IzySDKT/u1FJFJtJSTP+9UjzBchI/zOB+PpUDzHOeB754/CspVEjaNNsryy3MJ6ceo5/SiLUw+UlAUjvTbqRskKxPbJ7VnzI0h3B8HvjpmueVezOqOGUtzbW9XhWIdT3B5pk9ta3K7hgH1U4NYfKpjBJ/WhLuaFsZzn/a5FNYiL3JlhGtjjPjT4A/4SnR4xsze2hL2l5F/rYSe2fQ+mcV8e+P/AAjqOk6hJ9otvLudhkkWMHZIBwzoDypHdDyOoJFfoBBqKSDbMo561zfj7wF4e8W2kQvrZfNibfBPGdkkZ9mHY9weDXoYXGKPmjz8ThHLpqfneVppWvZ/id8Fdb8PXNxd2UDXdkHLAW6ZcKeQdue3fFeTXdlPbNiaJlB6HqD+Ne1CcZq6Z484SpuzM8rSYqZl9qYy02hKQwACk704ikIosO4ylpaKLFXG4opxFJigBuOaMUpooGApVBJpQKeq0JEtiqtdP8PvA/iXx1rY0nw1pkl7OBulfOyOFf7zueFH8+2axtHsLnU9StdOs4xJc3UqwxKTgFmOBk9hzzX6PfB7wNpfw+8E2mh6fEhmCh7y4C4a5mx8zk+meAOwrGvX9ktNzShR9q9djzH4Sfsx+GfDvkal4zlj8Qamp3C2AK2cR/3TzIf97j2r32MwwQpBBGkcUa7Y40UKqr2AA4A+lQXFxhtgOSetMWZIkLufpXk1Kzm7yZ6dOio6RRO7HAyeT+lICFXcT2qGGbexY9MdKVmBjLOeGP6CsudM15HckLFUyB8zdB7epqncXEcI67mz196S/utiuwPzY2KP5msKefe2Sx44Arjr4lQ0R3YbDOer2L11e4jbAA5/7696pPesF3A49xVZ3VzgkgiopAxIxg49a8ypiJyPVp4eEUWTdEk9SDSCR2OAeKh28EZxQCADyKx529zbkXQtByTyM+1OeNZBxx+FVVlwfenicADK4J6kGtI1TOVISaF0A2Y4qazlmKmPaaQPu5BzjrU9sqGQFvl966qNR3OStTXKTJpq3KEXKq6nsRXn/wAQ/gr4T8TRtLJp5t7oDia3cxt+PYj616oFKhCuCp65/n7VPtDJkHn0Ne5Rm4K6PArQUtz89fiL8Lda8LX930mtIWz5o42KTxuHVR23cr7ivPpoXikMcilWHUGv0t8XeFtM8S2Jt7uPyZlB8q4RRvjOORz1B6FTwQea+Lf2gfhfeeCteWS1tMaZcLuikjBMaP3T1UE8gHgZIz0r1KGI59GeZWociujx8rTCKnYHPNRsMV1NHOmRY9qKfikIpWLuNNJ2p3akosO4lNp9NPSgaHAc1IvSmAc1IuOtNENnrf7JWhJrnxs0kSwmWCwWS9k4yF2L8pP/AAIivvu5l2R4zivjr9g6MHx/rjgcjSwCfrKK+uNWm2nGeTwM14+Pn+8Z6mCheKK0kxwX4UE8Hv8AWqU90JJ1AYhB+tVbi53bgCcA4FVkkJYnsO9fO18XrZH0eHwlldm19qCDqeDyR0zTbu8Y+WqNgKAcD16/kKzE3MMknHp2p5J2ED8aj6zJov6tBO5JdTtJJx93jGarsuRxxzUm334xSHBPAyR6Vzybk7s6YpRVkM2DGDxQFCnFPz03dfemEqT2qGi02IwAGR3qCT6Y/Cp5lGMjPTsagckAbgT74yKiRcURsATgd/Wm7mGPb1pxdcYwRj3qAOS2Dnv+IrJs1SvuTxT/ADEAkcc1dtZiX4wc9jWRxvz6cip7Z/mUk4weKulWakRVoqUTs9OlDJtcHFWMbDg9O1YFlcmMgs2Bngk8CtqSX92G9Oor6TD1eaJ8xiaXLIkcAjPeuZ+Ivhq28X+FLzSZcJO8Z8iTAO1x069QfSuhkkwAwI2kc1XZiHDA/WutSa1RyOKasz83vGmh3mgeILnTr23MMiOflHTrg4/GsJxX1R+2T4Rha0tvFltCVdXEdyyj5TkYGfQ+/tXy04r3KNRVIJni1YeznYgIpDUhFMIrRoSYwikI/On4oIqSrkeKSnkYpuKVirjlqROtMFSAVSRDPpP9g1seMvEQAH/INj57/wCt/wA/lX1DrznzioPTqfSvAv2C7JV0HxNfeWu/7ZFHvwM4EecZ9MmvcddkPmnnAJx9a+bzWpZyPoMshflKDMeOwHJp8YIHoTUKEHI7jmrCKzANXycZczufVtWViRGK9xj3pyt05B9KasYK5PUClCID98dK3TZk0hw7ncOvpTGOeOfzpAYzkbiT6BTS5c8rH+LHFO4INvcf/rpSw24wM0uxyPvqMegzUbqw58z64QUPYaQ13XIHII9O9RFgRgMf5GpCj5JEmfwApXhcjJIYY7CsJXNVZFWVTyfTrVcuFb5l4x61bmTCnbwwHUVnuxJORz69qwm7G9PUSV14wenNTQgscZqmA4LA9zxWhpYD8EHH0pUtZF1NI3NuyXMG58AqQCcZ4rYhYGDbwDjGO2P8KzLFQox7AZ7GrsDqWKqeQcgeh719HhnZI+bxS5mxGk2KcDpnIpC3KkHIYZqHUNwkDR/3gcVV+0AtjODGcYPoeK7I1NbHBKnpcyvijoMXiXwRqWlScLLC3bPQE/z5/CvzzuEMcjoTkqxUkd8HFfpVbuLgNGRnIII/Cvzg1tAmrXiKNqrcSgA9sO1evl03K6PHzCKVmZrdaaRUrLzUZFeozz0xhHFJinEUhFKxdxre1NNSYFNIpWKTEFSqe9MHUVIgoQmfbv7FNjBafBme+RcTX2qTmRvXYFRce2M16Lr53SoBwATgVwn7HLq3wKslznbqF2D7fOK7jW2zdDPT+Gvk83ekj6jKFrH0KMWQGBPO7mr1uPU/nUFvCcsdvJPHtVlYypyBmvm6UGfRTknoTBVxz8xHrzT+54IPbnpUHmYXuc00XIIwfzrpUorcz5JPYmZWLdTg9TmgbUBx07+9VJrtY3wTn5eDTJrtRtPB9vWh1IjVObLRAwGOfWo2f+IL/jVWS9XzDvYKoGQabJq1rDAJiSoHUscY9OPep51LqXyOPQ0Y0dwpA5qQWzvwYwB6jgiuak8WqCxhtpFVO78Bj6DvmrmleK1mz9pRoVBH31I/XoapKk9GzGXtVqkaNxptzsLRPvB5IPP6jmsm6jKP8w2kDOPaung1G1KloSp3Dd161S1VLa7gLRfI7DIHTmlWw0OW8WOhiZKVpI50tnqo9jSQzGOYMGH58Y/pSumwsr9QAKZJGNu1Tg46ivN1iz1VZo6Syu/MTIbvnGOvv/jVlpjHOJFOQ2MfWuTW+a0ZFcnBOBgcitiC4yqbeV/l6V6uHxF1Y8rE4Zx17mzeyZlVlGUK4NZF5LiYFsAtw38v8KuJKoljV+VZcfpms7VlOGcHgYYflXoc/U8z2fQ1bGQxyLL1O3r64r4O+Mmmw6X8T/EVnAnlxLfO6p/d3/OR+bGvt7RLoSqq88jJB7Gviz46zGf4s+I2JBxeFcj2UCveyiXNJvyPn82jyxXqcEwqMirDiomr3GjxYsiIphqUimEVJqmNpuKfj1pO1KxSY1etSJUa8VItJIGfbn7FkrTfBeSDI/c6tcKvsCFNeianCZdQAA44xXgH7EXixYZNU8HzMFZ2+224x94BcSc/9819EzOsV8zSNwse4+gz3Jr5fNqfvtPufS5VU91Ndh0FuI42y20DqcZJ/CsXWNetrQMip5jpxguoz+GavyXM14PItIjHAR/rWbHB9B1rJfwdYSMfORm5z8x614srRVoK57VPV3mygniBbkKysEzwARgfn2/Gnx6gwOSPYCrs3heGPmFyABj6Vj6hpU1kxZg0iddqnFedW51q0enRdN6JmjGwnc4G75gFAOOnJNSXsUnlhkPIOQD/ACqDw7veLLDa7E4HYe1as6gxlTjphhmlGKlC5blyzsc5eSFMgl/m7bcmiysHumIAZ9oyPbNOlkC3IgWQkZ+XcB0rp7CS2ihUxjB75PX8azpw5nqy61RxjoirZ6PCkar5Plke+c1bezgCEFR+FTyXSJ8rzRLnoGIU/hVa4nbBKMsgx/Dgn8QOtdd6cVZHD78mY99Zzph7W6mQ5/hbIx9DVWyuL2GTNxhjyGOMBl9x6+4rSeeOdGSQEcfMVP8Ak/hVVolGCJCEbAVT1X3FYOT3idMYK1pIsXLrLtkCjkcjPUiqrHHLcY5q1mIRsvmfdGMtjj3NOjTPyqM8DaSOo9T7UpLm1LhLlVijMhdSCAWHardg37tEYHk4+h6j+VMnjABA7/nRpxxIqlgfnAP4c1VBNSJrtOBqsGkgilUYZTg1j+K9RSxs0SVwucLuz1PpW5bsiW+52GzPA/z+Fc1qqwz3L3F4oeNCCqMM/MM8131anJG55+Ho+0nZj/CVy7+TK8bgsME46V8hfGhU/wCFq+JvLGF/tCT8+M19I658QLSynWKG3uJRuwWhQbV9RnufpXkf7QVnpWqRaf4v0lFElyTDflVwGfHyOR2OAQfXAr1OH81p/WPYy3ex5vEWSVYYb6xHZbni78VC3WrMi1A619u0fCRZERTCKlIppFTY0TIyOKaRUhphzSaLGipE7VGvWpFFShyOn+Hnie98H+LLDxBp+PNtXy6E8SxkYdD9R+uK+5zq9vrmjWGq2QMlpf2azofVSOBX59QHkV9pfBK+W4+D/hh0wvlWxgIzkHa7Ag/UV4fEEUqKn52PZyCTdZw8juLXUBGkcbEo5A6dQParE+pQ28DSzzxQQjrJK4AH4nivJfGPifxFJ4mbw/4SsEuNQkTe88gylunQFvX6VzWv/BbxR4rtoZtd8Yz3N4JNzeejNFtx9wRqQAAeQa+LpOdR6uyPt6lGNON0rs9th8Z+H5WENvrukzsOCiXcZY/rUGpapaXQaMyK27vnt7V5L4R/Z10vRUWXUNeub3ZlvLEKRx7ipXd3OcGtzRvhxbaLdsLDxFqZiHDWskiyRn355B+lXWpyWkZXQqCg1zNWZ6L4SKXNs7ZOUcr06+9auqJi2JEgGB0ArP8ACtutkpgTfjCkluTnFampyERsqhdx61EV+6Ym/wB9ocFrCGOJrhlc4cEYbBx9BWTq2s6yFSy0qyuzcyplCyfMB6gdvq3FdbLBHPEylRu3ZB7561ceSSG2ZxEqFm5JOCwrmVJS1bO32zi9jyO1+H3izXtH1D+3Z5rfULkMLcx3ZKQ+mccsfU/lXNaX+zr4livXurjxNHaK+MLaSTFo+mcEkZz7+te/LrLWyAvCCOxBUD8805vE8MyGPaIMcFpG2j8Mda7qeJp0o8sTlrUqtWSk0eYt4d8Z+Ffm0rxJNqaqBts74GQvjtv+8M+vStzSvGCXjm0vUGnXyYE8bgsyeoUgYb2I6V2EX2K5cCCYXDnkrEyj8yTmrbW2yEefZ52ngj5gPy5FcMoqTvFnQ6ulpIzbH7E5EoivLlc5RBA20e5z94/oK1DPM/EdrKo6klMAfn1NQSRuRiBy0eeQkxGKjebysmaW+QerP8tUvdRnbm1GXTYZlwC55Izk/ien4U7TIvMvBGR97DdehH/1qo3V6D8nmvIC3Rjn+VSWN0VmBBCqOv09BTozXOiq1N+zNDV5xHB9nQcq2MDv0/wri/FV1dXUBsrckSSEJ8vVV/iP1x/Ouj1m5/eSuP8Alnkg/rXm1l400+Dx1eaZeWvzQqoinz/ERlh+tZ4qo5yaWxrgKPLG9tTf1vRLZfD6gQgeWBg45ArzL4gadKngHVYoEDRwXEUzeoG7kj1617Le3C3ulyiMhw8JIA7V5944aJPh1q9xMwjWQbAcfxbcAfiTj8arLpcuMpSj3RpmF55dWhLsz5rlXrmoGFWpRVdq/YGj8SiyBhUbCpmFMIqGjZMiIppFSEU0jFJo0TIlHNSL1pq08CpRTJUOMV9XfsqyNP8ADKaA4McWoTbg3TBCnn0r5RQdM19E/sjaswtte0qTHkwNFdp7M2VP/oI/GvHz+N8DJ9rM9XIZWxiXdM92tNMsNOuJLmCNY7i7fMkhy7PgdT3wB+VGoXj2q7UaKRj91Y5NzH6DrU1vHJOWkmIy45B7L2X/AB9asR2sUQPkKkTHqEUAV8ClJrQ+9uk7yOXmHiC+lVZ3FlDnO1fnlP8ARfxNbGm6VHAqhySc7hu5Yn61oxW3zB5Du288/wA6eX2rjjditIQstRzq30RPpoJmdlGQ2O3TFM1g7UIKgDrkVZ04hVwRjj8xRqapKhUEcnJ+lbcn7s5oy/emDbRnd5qg8+vYVpIYpQVdQy4A/GqSgxtjdgnOc9hUySIjAtIqnsKwWmh1yvLVDJ9JQTCSJ/mxyCMqfw9fekWKcNtYoFx/Dk/oavQuWww5XsRUm9D98EH6Vfso7oh1ZbMqRwQjDGOFvUsgJpst0IeIySvdCenuD/Skv1V0IQlc8goaxmjeQhzcBQDyDkdOxrCpPl0SNqVNT1bL93OJELQysnQnA3DH8+az5bgvktwp+6VOVb8f8aa0klo+8g7D1A52+49vUVTmlcndFEVDH51B4b3HvXJOdzqjTSI5pUP707TzwV4z+XWm27NJcKD1XkY/Lmq06ryVYoHOXK8YPrW1pyJFbu7DY23C55/CildsKukRrgTXEscgO0qzNt5OPavO/EPhKNIm1KDEk6OWaQfxgnIP5V6JPdLZWsl2+0KvLk/3QCSa5jTp7ltLkaVZG35+RUJxnOB+tE0nKxeGcoq62LXg2RpdNmLkFlhPHoMVwvxolitPhlaWzHEt5cBlHqAcn9BXottYyaR4cdZBi6uVEaR9Tk//AK68T/aC1VZtbtNBhOY9OhUN/vEdPy5/GvX4ewrq42C7ank8S4xUcBUd/i0R5JKDkk1WcVcl78VVkFfqjR+RRISBUbCpWFNIqbGqZFjsaaRUpFMIqWjRMrLUi0xaetZI0ZIvSvWP2ZNSWw+ITWcj7U1G1aLGerKQ6/yNeTpW74P1M6N4n0zVR0tbqORucfKDz+hNZY2h9Yw86fdGuCr+wxMKnZn3H5zDO1vfHvV62yAVYjOcmqOltHNAJkIZJPnU+o7VZncKMg/Wvy2C5XqfqLtPRF2R0CEnr6CuN1/xGlhrNlagPIbidYtg5PJq7qmseRC0jZGOmRjNY/w1tYda1i/8QXhWV4JTb2g7KcZZh78gVXN7WSijaNFUYOpJHoVieMk9eKlkTcBggHJOPaqayJENoIJ5wDR552j1I5BPQCu7nilY872cm7oq6iioODyeAax9S0K4vrUmK8eCfB2sOgP+FaE84klG5sjOc4qzJfWsEREkm7jjnvXI1Tk22dcXUjblOb0LXbu1lOj62FhvI1yCp+SVf7y+3t2NdIt2HX5Tn3zXl3xIuWv7u1/s9yt1AxdHXkqO+fY9MVe8I+JvtiG0ulaK8j4kQnn6j2rL2vL6HY8Oprm2Z3s06gEYwKplwwOVwDUKXCuhLMSR+tRvIYwNpGB0XPSsZzuVCnZE0iDADrtGOOazLwPFIjR5Ma9cfdwRj/8AXV0zKw6kn1qsvzsw6Z5+tYzs9hpNFYxpKoPKvndnPUj+dWIJjhoyMnGc+1IIxGgJbJ6DP5UAjLgLzgAYpRugexU1S1m1m3j06PP2dpVFyQQCIwcnH6CtV4IdJ0p7TT45AGOSWbJz61FbwSRW4ngY79zbh61ctAJYJGl+ffxhu3tWkLt2M20l5djFvbkWsdzrepSjyLWNjHk8cDlv6CvlbxJqU2sazeanPnfcymQg9geg/AYr2D9oHxWMjwtZ5TAV7o4wMdVQfXqfpXiMxr9C4Vy10KLry3nt6f8ABPzvi3NFiKyw8Nob+v8AwCnIOarSVak5qvIOa+r5T5NMgYU0ipWFNIqWjRMiIpmKlIpmKlxLTKeKkWmgU9RzXOkbtj1qzD06VXUVNF2reJjJn2H8E9dOrfDrSZnfdLDGbaX13Icc/hiusuJxtwG+6OleD/sw6yiRatoskjbty3US9sY2tj/x2vW9UvTHCxDBc/h/Ovy3OqP1bGTh0vf7z9VyKp9awlOfW1vuMbxzqEVvYyNI+SFJ5Pb+tcz8JPEWqWVveR+QZIbm48+IKcFCRgj6HA/GsPxtqFxqV7HYIrgyybeTklR1PHQV3PgrS1igjUxgEKDXmUb2bPoK6UYcrOjTxcgDLcQyWk6sf3cowT7g9CPpUEviy3Dj5xz2zV690a1v4yk6CRG7EZ571yGseBYBKTaSXkJGThZTt/WtKkWle5x0nBu1ix4i8dWunxkRB57hxlIkIyfc9gPc1ykj+M/EUyTTaq+n2p5EVrxke7nk/pW5o3gqCzuPMl3SM53Mz/MSfXPeu607TbdLcBY1K5Hbis4m/PGBz3hvQksbcZaSRmG53kJZmPbk1X8QaMGZb60kEFyn+rdR19j6g12xgUHAwQBzz+VUr2GJgMMp45GO1W46WJ9sua5x+k+IpfM+y3oMM69VJ4PuPUV0cdyJYtxB2ketYevaZa3qtHh0lXmOQcEH1FU/Ck960stheK3nQsFLjoQeh/GueSaOiMozVzqoZ1UqA4K9z3FTghpEKnaASCOvB5/nVWKPZgZ3AHJJHUVctNvlyjghT1AxUIyluTMjNGFYDP8AOq0DAzgE7SOSKmlbajEE5IyPSs5JeJZCwXdmm3cy7ljwzrMd1Ne2sp2+VOyD6dj+NQeO/E1n4b0eS+YB2A2pGOrv2H+e1Y9lY/vhKJHjcsTuU9QTXzD8VfH2vXHjy9glvWmsLSd4IrYrhAqsRn3bj734V6eV4X6xWSqfCtzzM3xSw1Jypr3mtO1zX1/U7vV9UuNSvpN887bmPYegHsBx+FZEp61HZ38V/ai4gbKN1B6qfQ0OSTX7HShD2a5Nuh+N1ZTdRue/Uic81EwqZl70wiqcRKRARTWWpiKaVqHE0UiEim4qUim4xUNFplACnKKRaeorkSOlscoqaMYIqNRUqVtFGUmdT8NtabQPGOn6gWIh8zyp8HrG3B/mD+FfS+rQTSWzOg83P3eK+Ro/519UfDLWRrfgfT72RyZVi8mfB53J8p/ln8a+N4xwfuwxC9H+aPt+C8baU8O/VfqclpGntN41LSLkJCwXPrkZ/GvQ9KvLeJ2gIAkyOCRx7UyPR1+1faYkAdX3KD346fjVqTw5peruRcxZyhKkcHn3FfE0pSskj7vFOEndm3/aNpGiNJNGpI4yaWS7sLkYF3Hz94Fq8N8YfDnxRoPiay1LRdS1DVNJE6tdadNck7o8/MFJ9s8e1et6d4O8NXpk+ySSIWgV0WOc5VST82D+X1r0ZUZJLW9zzJVadN3mmvPc1Li502yVmnuYwAM/erMfxXoiRKzy7eecYGQOlWdQ+GeiQyQST6jelGba0c1wAH46Z6086b4F8PXFpOba2kl8xo8RI1weV6sBnA46nvWXspMaxeHtaKcmYdx440p38uAyyvnnZGT+HFc54j+J2i6TGnnwX5luXKQQx25LysOoA74rtNRv531C6i0TQLdLeeJWS6aRUAfoQyAZAA5461geEfAlhpN9LrN9cS6lqckjObibohbqsSdEX6cnuaaoJO83obxm5rSFvUm8Ox3GoRrf3drcWm4bhE7jzF/3h2PtWxoumr/aU9wQQWjUYIxyDWpN5hCsEUD16fhT7Nw1tM/94jHqAK5JRjfQ15nYydRYeYyc5U5G3gVDZzmMuSxId84H4UzVJdrfLkHvnvim2iMsEIkAHc5Hc81yy3udSSsizqV0sVrjIBGTgdKzJX/cIAM7hjB/z61W1iffJ5eRnPPsBTbZ3luIkb03EenpQmYtGtZQk3Ssx4CgY/GvhPxkCPFOrK2QVvZxg9v3jV96Q5j3My8Ljn8a+GfilZvYePdagk6teSSD6MxYfzr6DJJe9JHzufRfLFmTompzabdeYmWRuJI88MP8a7y1nhvLZLiBtyMOB3HsfevM14YGuh0O+k06UMqSPDJjeu7IHuPevuMtx7oS5J/C/wAD4jHYFV488fiX4nWstRlfSrQ2SIrxkMrDII70wpX1fKmro+Y5mnZlcrTGWrBWmMPas3AtSICtMK1OR7UjCs3EtSMhRUi9aRRzUiCuGKOyTFUVIopFFPUVvFGUmSIOa9n/AGcdVYSaloUjDDgXMIJ7/dcf+g14wnBrpvAGtt4f8Wafqmf3UcoWYesbcN+nNcmbYL65gp0lvbT1O3KMb9TxsKrel9fRn1jboVhJxnHtzxUukShmmVNuFfk/0p9vJDLCHjZXjkGVYdx/9cUaeirNcOV43A7R6Yr8fgmpWP1+o1KDJtRUOdxXch9e1M0/TtPLmXMEcjAoS/yllPUBh29qnuBmIrgEdRWFftJACVhkPOeMEZr0IYhRVpK5nCPNHlubM2j25jiiIsXjj5jMq+aV9+c1WktI44WQzboy3+rRRGh+oHUVh/2nqLjy44iBn1xxTWbU5XyF4Y8AnH4USxUOkTenR5N2b6yQRx4ZlwOiLwP/AK9Sq/mvvwD8vGOw9qxba0vHkUzngex5/GtaBNqkY5J/OuapWlNhJLuLLGNuDwx6c/rUL5iR41GTnK+uD1H4GrCglSuASeCD6Z/z+VOuhhiEA75HpWM1oJPU565jMuoQxOwKk844HHJqxqCpHgAkEZJOeuaW0T/ibStIMiKPj0yx/wDrVU1mZYYccFgMk/0rla0OhSMUxGa7bjKlsc1fsQgvtu3Jx82Kr6aDjzXGcA1oWMOJt4wMjNQ9A6Fy5JFscGvlH9pTRmttc07WAgCXluY3Yf342PX3wR+VfVd658tto44A9/U15J8cNC/tvwHdRRoDPaTefDnrnuPxr18qq+zqpnj5pS9rSa6nykODmrkQbywQ3HWqjDDdMYPQ1oWKghgT0Ga+vR8fFM6Lw7qK2223upQsb9M/wH19ga6ZkyPauEbBjHyKXB+XIznPXNdV4Y1Bbm3+yTTxtMnCY6lcdPcivp8mxv8Ay4qP0Pnc4wf/AC+gvUuslRMtX2jqF09q+hlT6nz8ZlJlNNI9qsMvNMKVhKBupGKoqQD2pFFSKM15kUd8mKoqRRSKtSqK6YxMZMFFWYVGKiRasQqSwA6muiMUYydz6Z+CmsNrfge2iaT/AEqxP2eTnkhfuN+K8fga7mwJWZ88BlHOeB7fhXx38JPiOfCfxMMt7KV0e8UWlwM8Rrn5JMezcn2Jr6ytNUgN6qKylZRujYHKsevB9COa/Hc4oQpYyUofC27H6/k2InWwcYz1kkrnRlDt34OBwe9V5bXzEI2BiT0FWoP3iqRyDzx709OGUB8ADrn+dcsYRkd6bRmf2cVYYgA/2hip4rEAhvJ/Egc/StAEK2Co6Z6UvmKQ2SMZwMd609lBA6s2UniffgAhMe2c02SJYYzlSDj1z+NSzzBHKj7x5Ix29fas+afDMu4YPHsK56jjHY1hGUiY5yqqgA4xj25qhqd39njID855BPXPWpVukCSM55zhQe1cprd6bq7WIShRznHYdz9a5JzvsbQhZ6mzpco8mW6c4aU5UH0HT+tYeuN5sixq7ZP3jTrzVkiiVE28DAx2rOsnkuLlpHIOfu4/WsWa7GhZlY49hGM4zWpCC0qhVx/gKoRxeZtIBHqa24AiWasPlJ9fSoeoNpIqzqSSBk4BPFc14lshJo1/EcZcYU+hrqd/OxT87nOP9mqd/ZiaK5jb7rquz/erqwztM5MRqj4U8YWLab4kvbNxjZMSMeh5qO0JVG9wK9E+O3hmW01aTUghBztl4/I151akGIZyfSvtMNUU4Jnx1ak6dSS7l2MkFSpPB61YjkSFgyMYn3AqVXqfX2qCFtuAGxT1xnJBOfTr+Fd0G1qcE0nozvNIuE1DT0nDxmQErIqt91vp2BqWSPHauR0bUJrO9aYWwd2XawPdT16d/eu2t3ivIFmgIZT+YPofSvuMpx0cVT5JfEvx8z4vM8G8NU54/C/wM90qJkrTeE+lQPCRXoTpM4Y1Uf/Z';
+const SUTKI="<!DOCTYPE html><html lang=\"ru\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Сутки заказа — концепт экрана для Spark<\/title>\n<style>\n*{box-sizing:border-box}\nhtml,body{margin:0;height:100%;background:#E9E6DD;font-family:\"Segoe UI\",Arial,sans-serif;color:#17324F;overflow:hidden}\n#wrap{position:absolute;left:50%;top:50%;width:1280px;height:760px}\n#sheet{position:absolute;inset:0;background-color:#FBFAF6;border:2px solid #17324F;border-radius:6px;\nbackground-image:linear-gradient(#E3EBF4 1px,transparent 1px),linear-gradient(90deg,#E3EBF4 1px,transparent 1px);background-size:24px 24px;overflow:hidden}\n.hd{position:absolute;left:36px;top:22px}\n.hd .k{font-size:13px;letter-spacing:2px;font-weight:800;color:#E8642C}\n.hd h1{margin:4px 0 0;font-size:30px}\n.hd p{margin:4px 0 0;font-size:16px;color:#5c6b7c}\n#dial{position:absolute;left:20px;top:126px;width:640px;height:520px}\n#ramp{position:absolute;left:670px;top:110px;width:580px;height:330px;background:#fff;border:1.5px solid #17324F;border-radius:14px}\n#recs{position:absolute;left:670px;top:448px;width:580px}\n.rc{display:grid;grid-template-columns:28px 1fr 70px 96px;gap:10px;align-items:center;background:#fff;border:1.5px solid #C9D3DE;border-radius:12px;padding:7px 12px;margin-bottom:6px;cursor:pointer;font-size:15px;transition:all .25s;user-select:none}\n.rc:hover{border-color:#17324F}\n.rc.on{border-color:#2E9B6A;background:#EEF8F2}\n.rc .bx{width:24px;height:24px;border-radius:7px;border:2px solid #9FB3C8;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:15px}\n.rc.on .bx{background:#2E9B6A;border-color:#2E9B6A}\n.rc .d{font-weight:800;color:#2E9B6A;text-align:right}\n.rc .c{font-weight:700;color:#5c6b7c;text-align:right}\n#sum{position:absolute;left:670px;bottom:18px;width:580px;display:flex;justify-content:space-between;font-size:16px;font-weight:700}\n#stamp{position:absolute;left:30px;bottom:14px;font-size:12px;color:#7a8796}\n<\/style><\/head><body>\n<div id=\"wrap\"><div id=\"sheet\">\n <div class=\"hd\"><div class=\"k\">Демонстрационный экран · Spark · условные данные<\/div><h1>Сутки заказа<\/h1><p>Пример маршрута с целевым сроком 24 часа. Один заказ — один круг.<\/p><\/div>\n <div id=\"sel\" style=\"position:absolute;left:36px;top:104px;width:620px;font-size:14px;color:#33465C\"><\/div>\n <svg id=\"dial\" viewBox=\"0 0 640 520\" style=\"top:126px\"><\/svg>\n <div id=\"ramp\"><svg id=\"rs\" viewBox=\"0 0 580 330\" width=\"580\" height=\"330\"><\/svg><\/div>\n <div id=\"recs\"><div style=\"font-size:13px;font-weight:800;color:#5c6b7c;margin:0 0 6px 4px\">ПРИМЕР РЕКОМЕНДАЦИЙ МОДЕЛИ ОПТИМИЗАЦИИ · условные данные<\/div><\/div>\n <div id=\"sum\"><span id=\"s1\">Принято мер: 0<\/span><span id=\"s2\">Затраты: 0 ₸ в день<\/span><\/div>\n <div id=\"stamp\">Разработал: Накупов М., инженер-системотехник · цифры условные, для примера<\/div>\n<\/div><\/div>\n<script>\nconst NS='http://www.w3.org/2000/svg';\nfunction el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e}\nfunction tx(p,x,y,s,a){const e=el('text',Object.assign({x,y,'text-anchor':'middle','dominant-baseline':'central','font-family':'Segoe UI,Arial',fill:'#17324F','font-size':14},a||{}),p);e.textContent=s;return e}\nconst fmt=h=>(Math.round(h*10)/10).toString().replace('.',',');\n/* этапы одного заказа */\nconst COL={s:'#2A9D8F',w:'#D64541',t:'#5B5BD6',c:'#E8642C'};\nconst BASE=[['Заказ в системе',0.5,'s'],['Подбор',2,'s'],['Упаковка',1,'s'],['В зону отгрузки',0.5,'s'],['Ждёт рейса на рампе',5.5,'w'],['Погрузка',1,'t'],['Магистраль',10,'t'],['Сортировка в городе',3,'t'],['Курьер',5,'c']];\nconst REC=[\n {n:'Сортировать по городам прямо на складе-отправителе',d:'−2 ч',c:10000},\n {n:'Курьеры: плотнее маршруты, +1 курьер на полдня',d:'−1 ч',c:6000},\n {n:'Быстрее погрузка и планирование рейса',d:'−1,5 ч',c:6500},\n {n:'Дополнительный рейс в 17:00',d:'−4 ч',c:40000}];\nconst ON=[0,0,0,0];\n/* заказы дня */\nlet seed=7;const rnd=()=>{seed=(seed*16807)%2147483647;return (seed-1)/2147483646};\nconst ORD=[];for(let k=0;k<30;k++){const ready=8.6+k*0.4+rnd()*0.25;const pick=1.5+rnd(),pack=0.7+rnd()*0.5,mag=9+rnd()*2,cour=4+rnd()*2;\n ORD.push({no:1001+k*37,ready,pick,pack,mag,cour})}\nlet SEL=-1;\nfunction nextTruck(t,extra){const L=[13,21].concat(extra?[17]:[]).sort((a,b)=>a-b);for(const x of L)if(x>=t)return x;return 24+13}\nfunction orderDur(o,on){const zone=0.5;const atRamp=o.ready+zone;let wait=nextTruck(atRamp,on[3])-atRamp;if(on[2])wait=Math.max(0,wait-1);\n return [0.5,o.pick,o.pack,zone,wait,on[2]?0.5:1,o.mag,on[0]?1:3,on[1]?o.cour-1:o.cour]}\nfunction orderStart(o){return o.ready-o.pack-o.pick-0.5}\n\nfunction target(){if(SEL>=0)return orderDur(ORD[SEL],ON);const D=BASE.map(b=>b[1]);\n if(ON[0])D[7]=1; if(ON[1])D[8]=4;\n if(ON[3])D[4]=1.5; else if(ON[2])D[4]=4.5;\n if(ON[2])D[5]=0.5; return D}\nlet CUR=BASE.map(b=>b[1]);\n/* циферблат */\nconst dial=document.getElementById('dial');const CX=300,CY=212,R1=160,R2=114,W=28;\nfunction pt(r,h){const a=(h/24)*2*Math.PI-Math.PI/2;return[CX+r*Math.cos(a),CY+r*Math.sin(a)]}\nfunction arc(r,h0,h1){if(h1-h0>=23.999)h1=h0+23.999;const[x0,y0]=pt(r,h0),[x1,y1]=pt(r,h1);const lg=(h1-h0)>12?1:0;return`M${x0} ${y0} A${r} ${r} 0 ${lg} 1 ${x1} ${y1}`}\nfunction drawDial(D){dial.innerHTML='';\n el('circle',{cx:CX,cy:CY,r:R1,fill:'none',stroke:'#E6ECF2','stroke-width':W},dial);\n for(let h=0;h<24;h++){const[a,b]=pt(R1+W/2+4,h),[c,d]=pt(R1+W/2+(h%3?10:16),h);el('line',{x1:a,y1:b,x2:c,y2:d,stroke:'#17324F','stroke-width':h%3?1:2},dial);\n  if(h%3==0){const[x,y]=pt(R1+W/2+32,h);tx(dial,x,y,h+' ч',{'font-size':13,'font-weight':700,fill:'#5c6b7c'})}}\n const tot=D.reduce((a,b)=>a+b,0);\n if(tot>24)el('circle',{cx:CX,cy:CY,r:R2,fill:'none',stroke:'#FBE3E0','stroke-width':W},dial);\n let h=0;\n D.forEach((d,i)=>{const col=COL[BASE[i][2]];const s=h,e=h+d;h=e;\n  const gap=d>0.4?0.08:0.02;\n  if(s<24){const e1=Math.min(e,24);el('path',{d:arc(R1,s+gap,e1-gap),fill:'none',stroke:col,'stroke-width':W,'stroke-linecap':'butt'},dial)}\n  if(e>24){const s2=Math.max(s,24)-24,e2=e-24;el('path',{d:arc(R2,s2+gap,e2-gap),fill:'none',stroke:col,'stroke-width':W,opacity:.55},dial);\n   el('path',{d:arc(R2,s2+gap,e2-gap),fill:'none',stroke:'#D64541','stroke-width':2,'stroke-dasharray':'4 4',transform:'',opacity:.9},dial)}\n  if(d>=1.4){const mid=(s+e)/2;const r=(mid<24?R1:R2);const[x,y]=pt(r,mid%24);\n   const t=tx(dial,x,y,fmt(d),{'font-size':13,'font-weight':800,fill:'#fff'});}\n });\n /* подписи этапов — легенда снаружи справа */\n const ok=tot<=24.001;\n el('circle',{cx:CX,cy:CY,r:R2-W/2-6,fill:'#fff',stroke:ok?'#2E9B6A':'#D64541','stroke-width':3},dial);\n tx(dial,CX,CY-32,ok?'укладываемся':'не укладываемся',{'font-size':15,'font-weight':800,fill:ok?'#2E9B6A':'#D64541'});\n tx(dial,CX,CY+6,fmt(tot)+' ч',{'font-size':44,'font-weight':900,fill:ok?'#2E9B6A':'#D64541'});\n tx(dial,CX,CY+38,'от заказа до покупателя',{'font-size':12,fill:'#5c6b7c'});\n if(!ok){const[x,y]=pt(R2-62,((tot-24)/2));tx(dial,CX,CY+56,'+'+fmt(tot-24)+' ч сверх цели',{'font-size':12,'font-weight':800,fill:'#D64541'})}\n else{const[x0,y0]=pt(R1,0);el('circle',{cx:x0,cy:y0,r:9,fill:'#2E9B6A',stroke:'#fff','stroke-width':3},dial)}\n /* легенда */\n const L=[['s','Склад'],['w','Ожидание рейса'],['t','Транспорт'],['c','Курьер']];\n L.forEach(([k,n],i)=>{el('rect',{x:510,y:40+i*26,width:14,height:14,rx:4,fill:COL[k]},dial);tx(dial,530,47+i*26,n,{'text-anchor':'start','font-size':12.5,'font-weight':600})});\n drawMosaic();\n}\nfunction drawMosaic(){\n tx(dial,20,428,'Заказы дня — нажмите на любой (показаны 30 из ~1 400)',{'text-anchor':'start','font-size':13,'font-weight':700,fill:'#5c6b7c'});\n const t0=el('g',{style:'cursor:pointer'},dial);t0.onclick=()=>{SEL=-1;info();tween()};\n el('rect',{x:20,y:448,width:96,height:56,rx:10,fill:SEL<0?'#17324F':'#fff',stroke:'#17324F'},t0);tx(t0,68,467,'Типовой',{'font-size':13,'font-weight':800,fill:SEL<0?'#fff':'#17324F'});tx(t0,68,486,'заказ',{'font-size':13,'font-weight':800,fill:SEL<0?'#fff':'#17324F'});\n ORD.forEach((o,k)=>{const D=orderDur(o,ON);const tot=D.reduce((a,b)=>a+b,0);const ok=tot<=24.001;\n  const x=140+(k%15)*33,y=462+Math.floor(k/15)*30;const g=el('g',{style:'cursor:pointer'},dial);g.onclick=()=>{SEL=k;info();tween()};\n  el('circle',{cx:x,cy:y,r:12,fill:'#fff',stroke:SEL==k?'#E8642C':'#E6ECF2','stroke-width':SEL==k?4:5},g);\n  const fr=Math.min(tot,24)/24;const C=2*Math.PI*12;\n  el('circle',{cx:x,cy:y,r:12,fill:'none',stroke:ok?'#2E9B6A':'#D64541','stroke-width':4,'stroke-dasharray':`${C*fr} ${C}`,transform:`rotate(-90 ${x} ${y})`},g);\n  if(!ok)el('circle',{cx:x,cy:y,r:6,fill:'#D64541',opacity:.8},g)});\n}\nfunction info(){const e=document.getElementById('sel');if(SEL<0){e.innerHTML='Сейчас показан: <b>типовой заказ дня<\/b> — средний путь всех заказов';return}\n const o=ORD[SEL];const D=orderDur(o,ON);const tot=D.reduce((a,b)=>a+b,0);const atR=o.ready+0.5;const tr=nextTruck(atR,ON[3]);\n e.innerHTML=`Сейчас показан: <b>заказ №${o.no}<\/b> · поступил ${hh(orderStart(o))} · упакован ${hh(o.ready)} · уехал рейсом ${tr>24?'<b style=\"color:#D64541\">завтра в 13:00<\/b>':hh(tr).slice(0,5)} · ждал на рампе <b>${fmt(D[4])} ч<\/b>`}\nfunction tween(){const T=target();const from=CUR.slice();const t0=performance.now();\n (function f(t){const k=Math.min(1,(t-t0)/900);const e=1-Math.pow(1-k,3);CUR=from.map((v,i)=>v+(T[i]-v)*e);drawDial(CUR);if(k<1)requestAnimationFrame(f)})(t0)}\n/* рекомендации */\nconst recs=document.getElementById('recs');\nREC.forEach((r,i)=>{const d=document.createElement('div');d.className='rc';d.innerHTML=`<span class=\"bx\">✓<\/span><span>${r.n}<\/span><span class=\"d\">${r.d}<\/span><span class=\"c\">${r.c.toLocaleString('ru-RU')} ₸<\/span>`;\n d.onclick=()=>{ON[i]^=1;d.classList.toggle('on',!!ON[i]);if(i==3)ramp.extra=!!ON[3];tween();sums();info()};recs.appendChild(d)});\nfunction sums(){const n=ON.reduce((a,b)=>a+b,0);const c=REC.reduce((a,r,i)=>a+(ON[i]?r.c:0),0);\n document.getElementById('s1').textContent='Принято мер: '+n;document.getElementById('s2').textContent='Затраты: '+c.toLocaleString('ru-RU')+' ₸ в день'}\n/* рампа */\nconst rs=document.getElementById('rs');\nconst ramp={extra:false};\nconst X0=40,X1=550,H0=8,H1=24;const hx=h=>X0+(h-H0)/(H1-H0)*(X1-X0);\nconst TRK=[13,21],TRX=17;\nlet orders=[],now=8,lastSpawn=8;\nfunction hh(h){const H=Math.floor(h),M=Math.floor((h-H)*60);return String(H).padStart(2,'0')+':'+String(M).padStart(2,'0')}\nfunction drawRamp(){rs.innerHTML='';\n tx(rs,24,22,'Рампа отгрузки · сегодня',{'text-anchor':'start','font-size':17,'font-weight':800});\n el('line',{x1:X0,y1:250,x2:X1,y2:250,stroke:'#17324F','stroke-width':2},rs);\n for(let h=8;h<=24;h+=2){el('line',{x1:hx(h),y1:246,x2:hx(h),y2:254,stroke:'#17324F'},rs);tx(rs,hx(h),268,hh(h).slice(0,5),{'font-size':11.5,fill:'#5c6b7c'})}\n const trucks=TRK.concat(ramp.extra?[TRX]:[]);\n trucks.forEach(t=>{const x=hx(t);const gone=now>=t;\n  el('line',{x1:x,y1:98,x2:x,y2:250,stroke:gone?'#9FB3C8':'#5B5BD6','stroke-width':2,'stroke-dasharray':'5 4'},rs);\n  const g=el('g',{transform:`translate(${x-22},${gone?62:72})`,opacity:gone?.35:1},rs);\n  el('rect',{x:0,y:0,width:30,height:20,rx:3,fill:t==TRX?'#2E9B6A':'#5B5BD6'},g);el('rect',{x:30,y:6,width:14,height:14,rx:2,fill:t==TRX?'#2E9B6A':'#5B5BD6'},g);\n  el('circle',{cx:9,cy:22,r:4,fill:'#17324F'},g);el('circle',{cx:36,cy:22,r:4,fill:'#17324F'},g);\n  tx(rs,x,56,'рейс '+hh(t).slice(0,5),{'font-size':11.5,'font-weight':700,fill:t==TRX?'#2E9B6A':'#5B5BD6'})});\n /* заказы в очереди */\n const q=orders.filter(o=>!o.left);\n q.forEach((o,i)=>{const wait=now-o.t;const col=wait>4?'#D64541':wait>2?'#E8A23C':'#2A9D8F';\n  const col_i=i%9,row=Math.floor(i/9);el('circle',{cx:hx(now)-10-col_i*11,cy:228-row*11,r:4.6,fill:col},rs)});\n el('line',{x1:hx(now),y1:60,x2:hx(now),y2:256,stroke:'#E8642C','stroke-width':2.5},rs);\n tx(rs,hx(now),278+12,'сейчас '+hh(now),{'font-size':12,'font-weight':800,fill:'#E8642C'});\n const red=q.filter(o=>now-o.t>4).length;const nxt=trucks.filter(t=>t>now).sort((a,b)=>a-b)[0];\n tx(rs,24,306,`Ждут на рампе: ${q.length}`,{'text-anchor':'start','font-size':15,'font-weight':800});\n tx(rs,200,306,`дольше 4 ч: ${red}`,{'text-anchor':'start','font-size':15,'font-weight':800,fill:red?'#D64541':'#2E9B6A'});\n tx(rs,400,306,nxt?`до рейса ${hh(nxt-now).slice(0,5)}`:'рейсов больше нет',{'text-anchor':'start','font-size':15,'font-weight':700,fill:'#5B5BD6'});\n}\nfunction tick(){now+=0.025;if(now>24){now=8;orders=[];lastSpawn=8}\n if(now<20.5&&now-lastSpawn>0.22){orders.push({t:now,left:false});lastSpawn=now}\n const trucks=TRK.concat(ramp.extra?[TRX]:[]);\n trucks.forEach(t=>{if(now>=t&&now-0.025<t)orders.forEach(o=>{if(!o.left)o.left=true})});\n drawRamp()}\nsetInterval(tick,40);\ndrawDial(CUR);sums();info();\nfunction fit(){const s=Math.min(innerWidth/1300,innerHeight/780);document.getElementById('wrap').style.transform=`translate(-50%,-50%) scale(${s})`}\naddEventListener('resize',fit);fit();\n<\/script><\/body><\/html>\n";
+const NS='http://www.w3.org/2000/svg';
+const sv=document.getElementById('sv');
+function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);(p||sv).appendChild(e);return e}
+function tx(x,y,s,a,p){const e=el('text',Object.assign({x,y,'font-size':14,fill:'#17324F','text-anchor':'middle','dominant-baseline':'central','font-family':'Segoe UI,Arial'},a||{}),p);e.textContent=s;return e}
+function clear(){sv.innerHTML='<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9z" fill="context-stroke"/></marker><clipPath id="fc"><circle cx="0" cy="0" r="86"/></clipPath></defs>'}
+const T=[];function later(f,ms){T.push(setTimeout(f,ms))}
+
+/* ---------- сетевой график ---------- */
+const BASE=[
+ [1,2,'Заказ в системе',0.5],
+ [2,3,'Подбор товара',2],
+ [3,4,'Упаковка, накладная',1],
+ [2,5,'Планирование рейса',1],
+ [4,6,'В зону отгрузки',0.5],
+ [5,6,'Ожидание рейса',8],
+ [6,7,'Погрузка',1],
+ [7,8,'Магистраль',10],
+ [8,9,'Сортировка в городе',3],
+ [9,10,'Курьер до покупателя',5]];
+const POS={1:[45,290],2:[175,290],3:[300,140],4:[450,140],5:[300,450],6:[560,290],7:[660,290],8:[660,470],9:[520,560],10:[360,560]};
+const LBL={'1-2':[110,262],'2-3':[205,200],'3-4':[375,180],'4-6':[562,205],'2-5':[195,385],'5-6':[468,398],'6-7':[610,338],'7-8':[608,380],'8-9':[552,492],'9-10':[440,532]};
+const NP={1:[0,44],2:[0,44],3:[0,-42],4:[0,-42],5:[0,44],6:[0,-42],7:[0,-42],8:[0,44],9:[0,44],10:[0,44]};
+const EVN={1:'заказ',2:'в системе',3:'подобран',4:'упакован',5:'рейс назначен',6:'машина на рампе',7:'ушла',8:'в городе',9:'у курьера',10:'вручён'};
+function cpm(W){const ES={},LF={};for(let e=1;e<=10;e++)ES[e]=0;
+ W.slice().sort((a,b)=>a[0]-b[0]).forEach(w=>{});
+ for(let e=1;e<=10;e++)W.filter(w=>w[1]==e).forEach(w=>{ES[e]=Math.max(ES[e],ES[w[0]]+w[3])});
+ for(let e=10;e>=1;e--){LF[e]=e==10?ES[10]:Infinity;W.filter(w=>w[0]==e).forEach(w=>{LF[e]=Math.min(LF[e],LF[w[1]]-w[3])})}
+ const crit=W.map(w=>Math.abs(ES[w[0]]+w[3]-ES[w[1]])<1e-9&&Math.abs(LF[w[0]]-ES[w[0]])<1e-9&&Math.abs(LF[w[1]]-ES[w[1]])<1e-9);
+ return{ES,LF,crit,T:ES[10]}}
+function fmt(h){return (Math.round(h*10)/10).toString().replace('.',',')}
+function drawNet(W,o){o=o||{};const r=cpm(W);const R=26;
+ const g=el('g',{});
+ W.forEach((w,k)=>{const[a,b]=[POS[w[0]],POS[w[1]]];const dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy);
+  const x1=a[0]+dx/L*R,y1=a[1]+dy/L*R,x2=b[0]-dx/L*(R+3),y2=b[1]-dy/L*(R+3);
+  const c=o.showCrit&&r.crit[k]?'#D64541':(o.hl&&o.hl.includes(k)?'#E8642C':'#17324F');
+  const ln=el('line',{x1,y1,x2,y2,stroke:c,'stroke-width':o.showCrit&&r.crit[k]?3.4:1.6,'marker-end':'url(#ar)'},g);
+  if(o.anim){const len=Math.hypot(x2-x1,y2-y1);ln.setAttribute('stroke-dasharray',len);ln.setAttribute('stroke-dashoffset',len);ln.style.transition='stroke-dashoffset .6s ease '+(k*0.18)+'s';requestAnimationFrame(()=>requestAnimationFrame(()=>ln.setAttribute('stroke-dashoffset',0)))}
+  const [lx,ly]=LBL[w[0]+'-'+w[1]];
+  const t1=tx(lx,ly-8,w[2],{'font-size':12.5,fill:c,'font-weight':600,stroke:'#FBFAF6','stroke-width':4,'paint-order':'stroke'},g);
+  const t2=tx(lx,ly+8,fmt(w[3])+' ч',{'font-size':13,fill:c,'font-weight':800,stroke:'#FBFAF6','stroke-width':4,'paint-order':'stroke'},g);
+  if(o.anim){[t1,t2].forEach(t=>{t.style.opacity=0;t.style.transition='opacity .4s '+(k*0.18+.3)+'s';requestAnimationFrame(()=>requestAnimationFrame(()=>t.style.opacity=1))})}
+ });
+ for(let e=1;e<=10;e++){const[x,y]=POS[e];const res=r.LF[e]-r.ES[e];const cr=o.showCrit&&res<1e-9;
+  const eg=el('g',{},g);
+  el('circle',{cx:x,cy:y,r:R,fill:'#fff',stroke:cr?'#D64541':'#17324F','stroke-width':cr?2.6:1.6},eg);
+  el('line',{x1:x-R*.707,y1:y-R*.707,x2:x+R*.707,y2:y+R*.707,stroke:'#17324F','stroke-width':.8},eg);
+  el('line',{x1:x+R*.707,y1:y-R*.707,x2:x-R*.707,y2:y+R*.707,stroke:'#17324F','stroke-width':.8},eg);
+  tx(x,y-15,e,{'font-size':12,'font-weight':800},eg);
+  if(o.times){tx(x-15,y,fmt(r.ES[e]),{'font-size':10,fill:'#1F6FB2','font-weight':700},eg);tx(x+15,y,fmt(r.LF[e]),{'font-size':10,fill:'#7a5a1f','font-weight':700},eg);
+   tx(x,y+15,fmt(res),{'font-size':10,fill:res>0?'#2E9B6A':'#D64541','font-weight':800},eg)}
+  if(o.names){tx(x+NP[e][0],y+NP[e][1],EVN[e],{'font-size':12,fill:'#5c6b7c','font-style':'italic'},eg)}
+  if(o.anim){eg.style.opacity=0;eg.style.transition='opacity .4s '+(e*0.12)+'s';requestAnimationFrame(()=>requestAnimationFrame(()=>eg.style.opacity=1))}
+ }
+ return r}
+function legendNet(){const g=el('g',{transform:'translate(30,30)'});const R=20;
+ el('circle',{cx:20,cy:10,r:R,fill:'#fff',stroke:'#17324F','stroke-width':1.4},g);
+ el('line',{x1:20-R*.707,y1:10-R*.707,x2:20+R*.707,y2:10+R*.707,stroke:'#17324F','stroke-width':.8},g);el('line',{x1:20+R*.707,y1:10-R*.707,x2:20-R*.707,y2:10+R*.707,stroke:'#17324F','stroke-width':.8},g);
+ tx(20,-2,'№',{'font-size':10,'font-weight':800},g);tx(8,10,'Tр',{'font-size':9,fill:'#1F6FB2'},g);tx(32,10,'Tп',{'font-size':9,fill:'#7a5a1f'},g);tx(20,22,'R',{'font-size':9,fill:'#2E9B6A'},g);
+ tx(52,10,'событие: номер · ранний срок · поздний срок · резерв (часы)',{'text-anchor':'start','font-size':12.5,fill:'#5c6b7c'},g)}
+
+/* ---------- BPMN ---------- */
+function bpmn(o){o=o||{};const L=[['Kaspi',30],['Склад Spark',165],['Транспорт',300],['Покупатель',435]];const H=125;
+ L.forEach(([n,y],i)=>{el('rect',{x:10,y,width:680,height:H,fill:i%2?'#F3F6FA':'#fff',stroke:'#17324F','stroke-width':1});el('rect',{x:10,y,width:34,height:H,fill:'#17324F'});
+  const t=tx(27,y+H/2,n,{fill:'#fff','font-size':13,'font-weight':700});t.setAttribute('transform','rotate(-90 27 '+(y+H/2)+')')});
+ const task=(x,y,w,s,c)=>{const g=el('g',{});el('rect',{x,y,width:w,height:46,rx:10,fill:c||'#fff',stroke:'#17324F','stroke-width':1.4},g);
+  const parts=s.split('|');parts.forEach((p,i)=>tx(x+w/2,y+23+(i-(parts.length-1)/2)*15,p,{'font-size':12.5,'font-weight':600},g));return g};
+ const ar=(d,c,dash)=>el('path',{d,fill:'none',stroke:c||'#17324F','stroke-width':1.6,'marker-end':'url(#ar)','stroke-dasharray':dash||''});
+ el('circle',{cx:80,cy:92,r:15,fill:'#fff',stroke:'#2E9B6A','stroke-width':2});tx(80,122,'заказ',{'font-size':11,fill:'#5c6b7c'});
+ task(120,69,120,'Заказ|в систему склада');ar('M95 92 L118 92');
+ ar('M180 115 L180 203',null,'5 4');el('circle',{cx:180,cy:118,r:4,fill:'#fff',stroke:'#17324F'});
+ task(120,205,120,'Подбор|товара');task(270,205,120,'Упаковка,|накладная');ar('M240 228 L268 228');
+ const gx=440,gy=228;el('path',{d:`M${gx} ${gy-24} L${gx+24} ${gy} L${gx} ${gy+24} L${gx-24} ${gy} Z`,fill:o.red?'#FFE9E6':'#fff',stroke:o.red?'#D64541':'#17324F','stroke-width':1.8});
+ tx(gx,gy,'?',{'font-size':18,'font-weight':900,fill:o.red?'#D64541':'#17324F'});tx(gx,gy-38,'Успели к рейсу?',{'font-size':12,'font-weight':700,fill:o.red?'#D64541':'#17324F'});
+ ar('M390 228 L414 228');
+ task(520,205,150,'Погрузка',null);tx(492,218,'да',{'font-size':11.5,fill:'#2E9B6A','font-weight':700});ar('M464 228 L518 228','#2E9B6A');
+ const wt=task(380,325,150,'Ждёт|следующий рейс',o.red?'#FFE9E6':'#fff');if(o.red)wt.firstChild.setAttribute('stroke','#D64541');
+ ar('M440 252 L440 323',o.red?'#D64541':'#17324F');tx(452,280,'нет',{'font-size':11.5,fill:'#D64541','font-weight':700,'text-anchor':'start'});
+ ar('M530 348 L595 348 L595 253',o.red?'#D64541':'#17324F','5 4');
+ task(560,325,0,'');
+ task(220,325,140,'Магистраль,|сортировка');ar('M595 251 L595 260 L290 260 L290 323');
+ task(60,325,130,'Курьер');ar('M220 348 L192 348');
+ task(50,460,150,'Получение,|оплата');ar('M125 371 L125 458',null,'5 4');el('circle',{cx:125,cy:374,r:4,fill:'#fff',stroke:'#17324F'});
+ el('circle',{cx:300,cy:483,r:15,fill:'#fff',stroke:'#17324F','stroke-width':4});ar('M200 483 L283 483');
+ el('rect',{x:6,y:161,width:688,height:268,rx:6,fill:'none',stroke:'#E8642C','stroke-width':2.2});tx(650,176,'Spark',{'font-size':13,'font-weight':800,fill:'#E8642C'});
+ tx(600,44,'внешний участник',{'font-size':11.5,fill:'#7a8796','font-style':'italic'});tx(600,449,'внешний участник',{'font-size':11.5,fill:'#7a8796','font-style':'italic'});
+ if(o.token){const tok=el('circle',{r:9,fill:'#E8642C',stroke:'#fff','stroke-width':2});
+  const P=o.red?[[80,92],[180,92],[180,228],[330,228],[440,228],[440,348],[595,348],[595,228],[595,260],[290,260],[290,348],[125,348],[125,483],[300,483]]
+               :[[80,92],[180,92],[180,228],[330,228],[440,228],[595,228],[595,260],[290,260],[290,348],[125,348],[125,483],[300,483]];
+  let i=0;const step=()=>{if(i>=P.length){i=0}tok.setAttribute('cx',P[i][0]);tok.setAttribute('cy',P[i][1]);
+   tok.style.transition='none';i++;later(step,i>=P.length?1400:(o.red&&(i==6||i==7)?900:500))};
+  tok.style.transition='cx .45s, cy .45s';step()}
+}
+
+/* ---------- кадры ---------- */
+const F=[];
+const TXL={"Знакомство": ["Отклик · Spark", "Айдар Акылбекович, здравствуйте!", ["Меня зовут Мурат Накупов, я инженер-системотехник. Я увидел, что Spark ищет аналитика бизнес-процессов, и прочитал ваши выступления — на LogForum Asia и в отраслевой прессе.", "Одна ваша фраза меня зацепила. Я решил ответить на неё не резюме, а наглядным примером: где такой день может теряться, как это проверить по данным и как его вернуть. Это займёт около пяти минут."]], "Цена одного дня": ["Почему лишний день имеет значение", "Сколько стоит один день между складом и транспортом", ["Склад отработал вовремя. Транспорт отработал вовремя. А между ними заказ пролежал лишние сутки — и покупатель передумал.", "По вашей оценке рынка, это <b>15% отказов в e-commerce</b> и <b>до 40% падения продаж</b> в рознице по отдельной категории. И каждый отказ — это ещё и обратный путь: принять товар, проверить, вернуть на полку.", "При объёмах в сотни тысяч заказов в год даже небольшая доля отказов — это тысячи возвратов. Поэтому я начал с вопроса: <b>где такой лишний день может рождаться и как это проверить?</b>"]], "Путь заказа": ["Путь заказа · упрощённая схема в стиле BPMN", "Сначала — путь одного заказа", ["Я нарисовал его по «дорожкам»: склад и транспорт — внутри Spark, а Kaspi и покупатель — внешние участники. Пунктиром показан обмен с ними: заказ приходит, посылка уходит к покупателю.", "Внутри каждой дорожки всё понятно и, судя по вашим показателям, хорошо налажено: точность сборки 99,9%, срочные заказы собираются за час.", "Самое интересное начинается там, где заказ <b>переходит из одной дорожки в другую</b>.", "<span style=\"color:#7a8796;font-size:15px\">Схема составлена по открытым материалам Spark. В реальности она, конечно, подробнее.</span>"]], "Развилка": ["Одна возможная причина", "Развилка: успели к рейсу?", ["Заказ собран и упакован. Если успели к рейсу — он уезжает. Если нет — встаёт на полку и ждёт следующую машину. Иногда до вечера, иногда до завтра.", "Склад своё сделал вовремя, транспорт — тоже, а заказ всё равно ждёт. В примере я показываю одну возможную причину задержки — ожидание на стыке. <b>Возникает ли она у Spark и насколько часто, можно проверить по данным.</b>", "Вы говорили о том, что интеграция склада и транспорта <b>«консолидирует ответственность»</b>. Чтобы понять, где это даст больше всего, развилку полезно увидеть в цифрах: сколько заказов не успевают к рейсу, сколько часов ждут и почему."]], "Сетевой график": ["Сетевой график · метод критического пути", "Сколько это занимает времени", ["BPMN показывает, кто и что делает. Но не отвечает на вопрос, <b>сколько это занимает времени и где его можно сократить</b>. Для этого есть сетевой график — классический инструмент инженерного планирования.", "Кружки — <b>события</b>: «заказ упакован», «машина на рампе», «вручён». Стрелки — <b>работы</b> между ними, с длительностью. Часть работ идёт параллельно: пока склад собирает заказ, логисты уже планируют рейс.", "В каждом кружке — номер события, самый ранний и самый поздний срок его наступления и резерв: сколько часов событие может «подождать», не задерживая общий срок.", "<span style=\"color:#7a8796;font-size:15px\">Длительности условные, для примера.</span>"]], "Критический путь": ["Критический путь", "Красная цепочка задаёт срок", ["Самая длинная цепочка работ называется <b>критическим путём</b>. Именно она задаёт общий срок: в примере — <b>28,5 часа</b> от заказа до покупателя. Больше суток.", "Посмотрите на верхнюю ветку — подбор и упаковку. У неё <b>резерв 5,5 часа</b>: в примере заказ готов, а машины ещё нет. Ожидание на стыке, измеренное в часах.", "Отсюда правило метода: <b>чтобы сократить общий срок, ускорять нужно работы на критическом пути</b>. Ускорение других работ срок не сократит, хотя может повысить надёжность или снизить расходы. И после каждого ускорения критический путь нужно пересчитывать: он может сместиться."]], "Варианты": ["Условные варианты решений и их стоимости", "Проверим правило на трёх решениях", ["<b>А</b> — второй рейс в день: заказы меньше ждут машину. <b>Б</b> — сортировка по городам прямо на складе: в городе не нужно сортировать заново. <b>В</b> — ускорить сборку вдвое: самое очевидное решение.", "Нажимайте по одному и вместе — график пересчитается сам."]], "Самолёт": ["Пример из жизни", "Как успеть на самолёт и не переплатить", ["До вылета <b>4 часа</b>, а дорога занимает <b>5</b>. Не успеваем на час.", "Каждый участок пути можно ускорить — но за деньги, и цены разные: такси до трассы — полчаса за 2 000 ₸, платная дорога — полчаса за 1 000 ₸, быстрая регистрация — час за 10 000 ₸.", "Разумный человек начнёт с дешёвого: платная дорога и такси — вместе <b>час за 3 000 ₸</b>. Быструю регистрацию за 10 000 ₸ покупать не нужно.", "<b>Успеть к сроку и потратить как можно меньше — это и есть оптимизация.</b>"]], "Кого ждут": ["Пример из жизни · продолжение", "Ускорять нужно того, кого ждут", ["Теперь вы едете не один. Вы — сразу в аэропорт, а супруга заезжает за документами. Встречаетесь у входа.", "Вы приезжаете на час раньше. Если взять такси — вы просто дольше простоите у входа. <b>Деньги потрачены, а улетите не раньше.</b>", "Ускорять имеет смысл только того, кого ждут. В сетевом графике такая цепочка и называется <b>критическим путём</b>."]], "Склад — то же самое": ["От примера к складу", "У склада — то же самое, только сложнее", ["Участков не три, а десять. Часть идёт параллельно: пока собирают заказ, логисты планируют рейс. У каждого участка — своя цена ускорения.", "И стоит ускорить одних, как ждать начинают других. Сочетаний — тысячи. <b>В уме это уже не посчитать.</b>", "Для таких задач есть точный математический метод — <b>линейное программирование</b>. Его постановка — на следующем листе."]], "Математика": ["Математическая модель · линейное программирование", "Та же задача — строго, для специалиста", ["То, что мы разобрали на примере самолёта, в математике записывается так: <b>переменные</b> — что мы выбираем, <b>целевая функция</b> — чего хотим, <b>ограничения</b> — что нельзя нарушить.", "Задача решается стандартным симплекс-методом за доли секунды, а на реальных данных Spark просто пересчитывается.", "Что даёт этот расчёт руководителю — на следующем листе."]], "Сколько стоит ускорить": ["Что даёт расчёт", "Каждая мера стоит денег. Вопрос — какие из них окупаются временем", ["Чтобы заказ шёл быстрее, нужны меры: второй рейс, ещё один курьер, сортировка прямо на складе. <b>Каждая мера — это дополнительные затраты</b> в день.", "<b>Одни меры сокращают общий срок</b> — за свои деньги они дают выигрыш во времени. <b>Другие стоят денег, а срок не меняют</b>: они ускоряют то, что и так успевает. Это затраты без выигрыша.", "Модель отбирает только первые — и в самом дешёвом порядке. Справа — что она предлагает для каждого срока. Руководитель выбирает срок, а модель говорит, <b>что для этого сделать и во что это обойдётся</b>.", "<span style=\"color:#7a8796;font-size:15px\">Цифры условные, для примера.</span>"]], "Каким будет инструмент": ["Как это может выглядеть", "Руководитель видит одну картинку — часы", ["Вся эта математика не должна быть видна руководителю. Каждый заказ проходит по циферблату свой круг: склад, ожидание на рампе, машина, курьер. <b>Здесь — пример маршрута с целевым сроком 24 часа</b>; для других маршрутов цель своя.", "Уложился в целевой срок — круг замкнулся, он зелёный. Не уложился — хвост вылез на второй, внутренний круг, и отклонение от цели видно сразу.", "Каждый круг может рассчитываться по <b>сканам склада и данным о рейсах</b>. Рядом — рекомендации модели: что изменить, на сколько часов это сократит путь и сколько стоит.", "<b>На следующем листе — демонстрационный экран</b> на условных данных. Нажимайте на кружки заказов и на рекомендации."]], "Предложение": ["Предложение", "Предлагаю посчитать ваш настоящий день", ["Всё, что вы видели, построено на условных цифрах. Следующий шаг — проверить гипотезы на ваших данных.", "Предлагаю <b>бесплатный первичный разбор одного маршрута или группы заказов</b>. За 2–3 рабочих дня после получения данных я построю схему процесса «как есть», сетевой график с реальными временами, найду критический путь и подготовлю <b>2–3 варианта решений с оценкой</b>: что может дать каждый и во что обойдётся.", "Результат — выводы и предложения для обсуждения с вашей операционной и IT-командой: что проверить дальше и что имеет смысл автоматизировать в первую очередь.", "Объём, сроки и стоимость дальнейшей работы обсудим отдельно — по итогам разбора."]], "Обо мне": ["Обо мне", "«Точное понимание бизнес-процессов» — это моя работа", ["Так вы сказали на LogForum Asia о роботизации. По образованию я <b>инженер-системотехник, выпускник МАИ</b>, окончил аспирантуру Института кибернетики. Помог привести в систему более 200 компаний.", "Самый значимый мой проект — проектный институт, где <b>более 2000 строительных объектов</b> встали из-за изменения цен: все сметы устарели. Я начал не с компьютеров, а с того, как проект проходит по институту, — и через полгода документация ушла строителям.", "Этот опыт научил меня главному: <b>автоматизация приносит пользу, только когда понятен сам процесс</b>. Сегодня я также разрабатываю инструменты автоматизации и контроля с применением нейросетей."]], "Встреча": ["Давайте встретимся", "30 минут — и выберем день для разбора", ["Если такой подход вам интересен, давайте встретимся на 30 минут. Вы расскажете, где сейчас болит сильнее всего, а я покажу, как проведу разбор и какой результат подготовлю.", "Напишите или позвоните мне."]]};
+function L(kick,lead,paras,extra){const o=TXL[F[S][0]];if(o){kick=o[0];lead=o[1];paras=o[2]}document.getElementById('left').innerHTML=`<div class="ani"><div class="kick">${kick}</div><div class="lead">${lead}</div><div class="bd">${(paras||[]).map(p=>'<p>'+p+'</p>').join('')}</div>${extra||''}</div>`}
+
+F.push(['Знакомство',()=>{
+ L('Отклик · Spark','Здравствуйте, Айдар Акылбекович!',[
+  'Меня зовут Мурат Накупов, я инженер-системотехник. Увидел, что вы ищете аналитика бизнес-процессов, и прочитал ваши выступления.',
+  'Одна ваша фраза меня зацепила — и я решил ответить на неё не резюме, а расчётом.'],
+  `<div class="quote">«Всего один день задержки между „отгрузили“ и „доставили“ провоцирует 15% отказов от товара в e-commerce»<small>Айдар Турмухамбетов, Bizmedia.kz, 16.10.2025</small></div>`);
+ const g=el('g',{transform:'translate(350,250)'});el('circle',{r:100,fill:'#fff',stroke:'#E8642C','stroke-width':4},g);
+ el('image',{href:FACE,x:-86,y:-86,width:172,height:172,'clip-path':'url(#fc)'},g);
+ el('rect',{x:-140,y:118,width:280,height:50,rx:25,fill:'#17324F'},g);tx(0,135,'Мурат Накупов',{fill:'#fff','font-weight':800,'font-size':16},g);tx(0,153,'инженер-системотехник, выпускник МАИ',{fill:'#C9D6E4','font-size':11.5},g);
+ tx(350,520,'Листайте кнопкой «Дальше» — это 5 минут',{'font-size':14,fill:'#7a8796'})}]);
+
+F.push(['Цена одного дня',()=>{
+ L('Ваши же цифры','Сколько стоит один день на стыке склада и транспорта',[
+  'Склад отработал. Транспорт отработал. А между ними заказ пролежал сутки — и покупатель уже передумал.',
+  'По вашей оценке это <b>15% отказов в e-commerce</b> и <b>до 40% падения продаж</b> в рознице по отдельной категории. Каждый отказ — это ещё и обратный путь: принять, проверить, вернуть на полку.']);
+ const g=el('g',{});
+ [[175,'15%','отказов от товара','в e-commerce','#D64541'],[525,'40%','падение продаж','в рознице','#E8642C']].forEach(([x,n,a,b,c],i)=>{
+  const gg=el('g',{transform:`translate(${x},250)`},g);el('circle',{r:130,fill:'#fff',stroke:c,'stroke-width':3},gg);
+  const arc=el('circle',{r:130,fill:'none',stroke:c,'stroke-width':14,'stroke-dasharray':817,'stroke-dashoffset':817,transform:'rotate(-90)'},gg);
+  later(()=>{arc.style.transition='stroke-dashoffset 1.4s';arc.setAttribute('stroke-dashoffset',817*(1-(i?0.4:0.15)))},200);
+  tx(0,-10,n,{'font-size':70,'font-weight':900,fill:c},gg);tx(0,48,a,{'font-size':16,'font-weight':700},gg);tx(0,70,b,{'font-size':14,fill:'#5c6b7c'},gg)});
+ tx(350,470,'«один день задержки между „отгрузили“ и „доставили“»',{'font-size':17,'font-weight':700,fill:'#17324F'});
+ tx(350,500,'— А. Турмухамбетов',{'font-size':13,fill:'#7a8796'})}]);
+
+F.push(['Путь заказа',()=>{
+ L('Путь заказа · нотация BPMN','Как заказ проходит через компанию',[
+  'Я нарисовал путь заказа так, как его рисуют аналитики, — по «дорожкам»: Kaspi, склад, транспорт, покупатель. Каждая дорожка — свой хозяин.',
+  'Оранжевая точка — один заказ. Внутри каждой дорожки всё понятно. Самое интересное — <b>места, где заказ переходит из одной дорожки в другую</b>.',
+  '<span style="color:#7a8796;font-size:15px">Схема составлена по открытым материалам Spark — у вас, конечно, детальнее.</span>']);
+ bpmn({token:true})}]);
+
+F.push(['Развилка',()=>{
+ L('Где теряется день','Развилка, которую никто не видит',[
+  'Заказ собран и упакован. Вопрос: <b>успели к рейсу?</b> Если да — всё хорошо. Если нет — заказ встаёт на полку и ждёт следующую машину.',
+  'Склад своё сделал вовремя. Транспорт — тоже. Но между ними заказ «ничей» — и именно здесь, по-моему, рождается тот самый день.',
+  'Вы сами назвали решение: <b>«консолидировать ответственность»</b>. Чтобы её консолидировать, нужно сначала увидеть эту развилку в цифрах.']);
+ bpmn({token:true,red:true})}]);
+
+F.push(['Сетевой график',()=>{
+ L('Сетевой график · метод критического пути','А теперь — как это считает инженер',[
+  'BPMN показывает, <b>кто и что</b> делает. Но не отвечает на вопрос <b>«сколько времени и где его можно сократить»</b>. Для этого есть сетевой график.',
+  'Кружки — <b>события</b> («заказ упакован», «машина на рампе»). Стрелки — <b>работы</b> с их длительностью. Часть работ идёт параллельно: пока собирают заказ, уже планируют рейс.',
+  'В каждом кружке — ранний и поздний срок события и резерв времени.',
+  '<span style="color:#7a8796;font-size:15px">Длительности условные — для примера.</span>']);
+ drawNet(BASE,{anim:true,times:true,names:true});legendNet()}]);
+
+F.push(['Критический путь',()=>{
+ const r=cpm(BASE);
+ L('Критический путь','Красная цепочка решает всё',[
+  `Самая длинная цепочка работ — <b>критический путь</b>. Она и задаёт срок: <b>${fmt(r.T)} часа</b> от заказа до покупателя. Больше суток.`,
+  'Смотрите на верхнюю ветку — подбор и упаковку. У неё <b>резерв 5,5 часа</b>: заказ готов, а машины ещё нет. Это и есть тот самый «день» на стыке, только теперь в часах.',
+  'И главный вывод метода: <b>ускорять имеет смысл только красное</b>.']);
+ drawNet(BASE,{showCrit:true,times:true,names:true});legendNet()}]);
+
+let V={A:0,B:0,C:0};
+function renderVar(){clear();const W=BASE.map(w=>w.slice());
+ if(V.A)W[5][3]=3;if(V.B)W[8][3]=1;if(V.C)W[1][3]=1;
+ const hl=[];if(V.A)hl.push(5);if(V.B)hl.push(8);if(V.C)hl.push(1);
+ const r=drawNet(W,{showCrit:true,times:true,names:false,hl});legendNet();
+ const base=cpm(BASE).T,d=base-r.T;
+ let verdict=d>0?`<span style="color:#2E9B6A">минус ${fmt(d)} ч</span>`:'<span style="color:#D64541">срок не изменился</span>';
+ let note='';if(V.C&&!V.A&&!V.B)note='<br>Сборку ускорили вдвое — а покупатель получил заказ <b>ни на минуту не раньше</b>: она не на критическом пути. Деньги потрачены впустую.';
+ if(r.T<=24)note+='<br><b style="color:#2E9B6A">Уложились в сутки.</b>';
+ document.getElementById('res').innerHTML=`Срок доставки: <span class="t">${fmt(r.T)} ч</span> · ${verdict}${note}`;
+ document.querySelectorAll('.vb').forEach(b=>b.classList.toggle('on',!!V[b.dataset.k]))}
+F.push(['Варианты',()=>{
+ V={A:0,B:0,C:0};
+ L('Оптимизация · варианты','Три решения — и одно из них бесполезное',[
+  'Нажимайте варианты по одному и вместе — график пересчитается сам.'],
+  `<div><span class="vb" data-k="A" onclick="V.A^=1;renderVar()">А · второй рейс в день</span><span class="vb" data-k="B" onclick="V.B^=1;renderVar()">Б · сортировка по городам прямо на складе</span><span class="vb" data-k="C" onclick="V.C^=1;renderVar()">В · ускорить сборку вдвое</span></div><div class="res" id="res"></div>`);
+ renderVar()}]);
+
+F.push(['Самолёт',()=>{
+ L('','',[]);
+ const X0=40,X1=660,HR=(X1-X0)/5,hx=h=>X0+h*HR;
+ tx(350,30,'До вылета 4 часа. Дорога — 5 часов.',{'font-size':18,'font-weight':800});
+ const seg=[['Автобус',1.5,'#5B5BD6','Такси','−0,5 ч','2 000 ₸',1],['Трасса',2,'#2A9D8F','Платная дорога','−0,5 ч','1 000 ₸',1],['Регистрация',1.5,'#E8642C','Быстрая регистрация','−1 ч','10 000 ₸',0]];
+ const g=el('g',{});const bars=[];let h=0;
+ seg.forEach(([n,d,c],k)=>{const r=el('rect',{x:hx(h)+2,y:110,width:d*HR-4,height:52,rx:8,fill:c},g);const t=tx(hx(h+d/2),136,n+' · '+fmt(d)+' ч',{'font-size':14,'font-weight':700,fill:'#fff'},g);bars.push([r,t,d]);h+=d});
+ for(let k=0;k<=5;k++){el('line',{x1:hx(k),y1:170,x2:hx(k),y2:178,stroke:'#17324F'});tx(hx(k),190,k+' ч',{'font-size':12,fill:'#5c6b7c'})}
+ el('line',{x1:hx(4),y1:80,x2:hx(4),y2:200,stroke:'#D64541','stroke-width':2.5,'stroke-dasharray':'6 4'});
+ tx(hx(4),68,'✈ вылет',{'font-size':15,'font-weight':800,fill:'#D64541'});
+ const late=el('rect',{x:hx(4),y:104,width:HR,height:64,rx:6,fill:'none',stroke:'#D64541','stroke-width':2.5},g);
+ const lt=tx(hx(4.5),222,'опаздываем на 1 час',{'font-size':15,'font-weight':800,fill:'#D64541'});
+ tx(350,262,'Что можно ускорить — и сколько это стоит',{'font-size':15,'font-weight':700,fill:'#5c6b7c'});
+ const cards=seg.map(([n,d,c,m,dh,cost,ch],k)=>{const x=20+k*226;const cg=el('g',{});
+  const r=el('rect',{x,y:280,width:210,height:120,rx:12,fill:'#fff',stroke:'#C9D3DE','stroke-width':1.5},cg);
+  el('rect',{x,y:280,width:210,height:8,rx:4,fill:c},cg);
+  tx(x+105,312,m,{'font-size':16,'font-weight':800},cg);tx(x+105,344,dh,{'font-size':22,'font-weight':900,fill:'#2E9B6A'},cg);tx(x+105,376,cost,{'font-size':18,'font-weight':800,fill:'#5c6b7c'},cg);
+  const mark=tx(x+105,425,'',{'font-size':15,'font-weight':800},cg);return[r,mark,ch]});
+ const res=tx(350,500,'',{'font-size':20,'font-weight':900});const res2=tx(350,532,'',{'font-size':15,fill:'#5c6b7c'});
+ later(()=>{cards.forEach(([r,mark,ch])=>{if(ch){r.setAttribute('stroke','#2E9B6A');r.setAttribute('stroke-width',3);r.setAttribute('fill','#EEF8F2');mark.textContent='✓ берём';mark.setAttribute('fill','#2E9B6A')}else{r.setAttribute('opacity',.55);mark.textContent='не нужна';mark.setAttribute('fill','#9aa0a6')}});
+  const nd=[1,1.5,1.5];let hh2=0;bars.forEach(([r,t,d],k)=>{r.style.transition='all .8s';t.style.transition='all .8s';r.setAttribute('x',hx(hh2)+2);r.setAttribute('width',nd[k]*HR-4);t.setAttribute('x',hx(hh2+nd[k]/2));t.textContent=seg[k][0]+' · '+fmt(nd[k])+' ч';hh2+=nd[k]});
+  late.setAttribute('opacity',0);lt.textContent='успеваем!';lt.setAttribute('fill','#2E9B6A');lt.setAttribute('x',hx(3.6));
+  res.textContent='Ускорили на 1 час за 3 000 ₸ — и успели';res.setAttribute('fill','#2E9B6A');res2.textContent='Самое дешёвое сочетание. Быстрая регистрация за 10 000 ₸ не понадобилась.'},2600)}]);
+
+F.push(['Кого ждут',()=>{
+ L('','',[]);
+ const X0=60,HR=110,hx=h=>X0+h*HR;
+ tx(350,30,'Вы и супруга едете разными дорогами и встречаетесь у входа',{'font-size':16,'font-weight':800});
+ const yb=el('rect',{x:hx(0),y:90,width:3*HR-4,height:50,rx:8,fill:'#9FB3C8'});const ybt=tx(hx(1.5),115,'Вы: сразу в аэропорт · 3 ч',{'font-size':14,'font-weight':700,fill:'#fff'});
+ const wait=el('rect',{x:hx(3),y:90,width:HR-4,height:50,rx:8,fill:'#FFF3DC',stroke:'#E8A23C','stroke-dasharray':'5 4'});const wt=tx(hx(3.5),115,'ждёте 1 ч',{'font-size':13.5,'font-weight':800,fill:'#9A5A00'});
+ el('rect',{x:hx(0),y:190,width:4*HR-4,height:50,rx:8,fill:'#D64541'});tx(hx(2),215,'Супруга: за документами · 4 ч',{'font-size':14,'font-weight':700,fill:'#fff'});
+ el('line',{x1:hx(4),y1:70,x2:hx(4),y2:260,stroke:'#17324F','stroke-width':2.5});tx(hx(4)+8,62,'вход',{'text-anchor':'start','font-size':14,'font-weight':800});
+ el('rect',{x:hx(4)+6,y:140,width:150,height:50,rx:8,fill:'#E8642C'});tx(hx(4)+81,165,'Регистрация',{'font-size':14,'font-weight':700,fill:'#fff'});
+ for(let k=0;k<=4;k++){tx(hx(k),280,k+' ч',{'font-size':12,fill:'#5c6b7c'})}
+ const g1=el('g',{});g1.style.opacity=0;g1.style.transition='opacity .6s';
+ el('rect',{x:30,y:320,width:640,height:110,rx:12,fill:'#FDECEA',stroke:'#D64541','stroke-width':2},g1);
+ tx(50,348,'✗  Такси для вас: −0,5 ч · 2 000 ₸',{'text-anchor':'start','font-size':17,'font-weight':800,fill:'#B42318'},g1);
+ tx(50,378,'Вы приедете ещё раньше и будете ждать у входа уже 1,5 часа.',{'text-anchor':'start','font-size':15,fill:'#33465C'},g1);
+ tx(50,404,'Улетите не раньше. Деньги — впустую.',{'text-anchor':'start','font-size':15,'font-weight':700,fill:'#B42318'},g1);
+ const g2=el('g',{});g2.style.opacity=0;g2.style.transition='opacity .6s';
+ el('rect',{x:30,y:450,width:640,height:110,rx:12,fill:'#EEF8F2',stroke:'#2E9B6A','stroke-width':2},g2);
+ tx(50,478,'✓  Ускорять нужно того, кого ждут — супругу',{'text-anchor':'start','font-size':17,'font-weight':800,fill:'#1E7A50'},g2);
+ tx(50,508,'Её путь — самый длинный, он и задаёт время встречи.',{'text-anchor':'start','font-size':15,fill:'#33465C'},g2);
+ tx(50,534,'В сетевом графике такая цепочка называется критическим путём.',{'text-anchor':'start','font-size':15,'font-weight':700,fill:'#1E7A50'},g2);
+ later(()=>{g1.style.opacity=1;yb.style.transition='all .6s';yb.setAttribute('width',2.5*HR-4);ybt.setAttribute('x',hx(1.25));ybt.textContent='Вы на такси · 2,5 ч';wait.setAttribute('x',hx(2.5));wait.setAttribute('width',1.5*HR-4);wt.setAttribute('x',hx(3.25));wt.textContent='ждёте 1,5 ч'},1400);
+ later(()=>g2.style.opacity=1,2800)}]);
+
+F.push(['Склад — то же самое',()=>{
+ L('','',[]);
+ tx(175,34,'В примере',{'font-size':16,'font-weight':800,fill:'#5c6b7c'});tx(525,34,'На складе',{'font-size':16,'font-weight':800,fill:'#E8642C'});
+ const M=[['Участки дороги','Этапы: сборка, погрузка, магистраль, курьер'],['Вылет через 4 часа','Целевой срок доставки, например 24 часа'],['Такси, платная дорога','Второй рейс, ещё курьер, сортировка на складе'],['Цена ускорения','Дополнительные затраты в день'],['Вы и супруга едете параллельно','Сборка заказа и планирование рейса идут параллельно'],['Ускорять того, кого ждут','Ускорять работы на критическом пути']];
+ M.forEach(([a,b],k)=>{const y=52+k*82;const g=el('g',{});g.style.opacity=0;g.style.transition='opacity .45s';later(()=>g.style.opacity=1,150+k*280);
+  el('rect',{x:10,y,width:320,height:68,rx:10,fill:'#fff',stroke:'#C9D3DE','stroke-width':1.4},g);tx(170,y+34,a,{'font-size':15,'font-weight':700},g);
+  el('line',{x1:334,y1:y+34,x2:364,y2:y+34,stroke:'#E8642C','stroke-width':2.4,'marker-end':'url(#ar)'},g);
+  el('rect',{x:370,y,width:320,height:68,rx:10,fill:'#FFF3EC',stroke:'#E8642C','stroke-width':1.4},g);
+  const parts=b.length>30?[b.slice(0,b.lastIndexOf(' ',30)),b.slice(b.lastIndexOf(' ',30)+1)]:[b];
+  parts.forEach((pp,i)=>tx(530,y+34+(i-(parts.length-1)/2)*18,pp,{'font-size':14.5,'font-weight':600},g))});
+ const g=el('g',{});g.style.opacity=0;g.style.transition='opacity .5s';later(()=>g.style.opacity=1,2000);
+ el('rect',{x:10,y:552,width:680,height:62,rx:12,fill:'#17324F'},g);tx(350,574,'Только участков не три, а десять — и стоит ускорить одних, как ждать начинают других.',{'font-size':14.5,'font-weight':700,fill:'#fff'},g);
+ tx(350,598,'В уме не посчитать — нужен расчёт.',{'font-size':15,'font-weight':800,fill:'#FFC9A8'},g)}]);
+
+F.push(['Математика',()=>{
+ L('Математическая модель · линейное программирование','Как успеть к сроку и потратить меньше всего',[
+  'Представьте: до вылета 4 часа, а дорога занимает 5. Можно взять такси, поехать платной дорогой, купить быструю регистрацию — у каждого ускорения своя цена. Разумный человек ускорит сначала то, что дешевле. И только того, <b>кого ждут</b>: если вы всё равно будете ждать попутчика у входа, такси — выброшенные деньги.',
+  'У склада то же самое, только участков десять, часть идёт параллельно, и стоит ускорить одних — ждать начинают других. В уме это не сосчитать. Это и есть задача <b>линейного программирования</b>: найти самое дешёвое сочетание ускорений, при котором заказ укладывается в срок.']);
+ const g=el('g',{transform:'translate(20,14)'});
+ el('rect',{x:0,y:0,width:660,height:600,rx:14,fill:'#fff',stroke:'#9FB3C8'},g);
+ const sec=(y,t,c)=>{el('rect',{x:16,y,width:6,height:22,fill:c||'#E8642C'},g);tx(32,y+11,t,{'text-anchor':'start','font-size':15.5,'font-weight':800},g)};
+ const ln=(y,t,a)=>tx(32,y,t,Object.assign({'text-anchor':'start','font-size':14.5,fill:'#33465C'},a||{}),g);
+ sec(16,'ПЕРЕМЕННЫЕ — что мы выбираем');
+ ln(54,'Tᵢ — момент наступления события i, часов от поступления заказа (i = 1…10)');
+ ln(78,'xᵢⱼ — на сколько часов сокращаем работу (i → j)');
+ sec(104,'ЦЕЛЕВАЯ ФУНКЦИЯ — чего хотим');
+ ln(142,'Z = Σ cᵢⱼ · xᵢⱼ  →  min',{'font-size':19,'font-weight':800,fill:'#17324F','font-family':'Cambria Math,Times New Roman,serif'});
+ ln(166,'суммарные затраты на ускорение в день; cᵢⱼ — цена одного часа сокращения работы');
+ sec(192,'ОГРАНИЧЕНИЯ — что нельзя нарушить');
+ ln(230,'Tⱼ ≥ Tᵢ + dᵢⱼ − xᵢⱼ',{'font-size':18,'font-weight':800,fill:'#17324F','font-family':'Cambria Math,Times New Roman,serif'});
+ ln(230,'',{});tx(250,230,'— работа идёт после предыдущей',{'text-anchor':'start','font-size':13.5,fill:'#5c6b7c'},g);
+ ln(258,'0 ≤ xᵢⱼ ≤ aᵢⱼ',{'font-size':18,'font-weight':800,fill:'#17324F','font-family':'Cambria Math,Times New Roman,serif'});
+ tx(250,258,'— сократить можно не больше, чем возможно',{'text-anchor':'start','font-size':13.5,fill:'#5c6b7c'},g);
+ ln(286,'T₁ = 0,   T₁₀ ≤ 24',{'font-size':18,'font-weight':800,fill:'#17324F','font-family':'Cambria Math,Times New Roman,serif'});
+ tx(250,286,'— старт и директивный срок: покупатель за сутки',{'text-anchor':'start','font-size':13.5,fill:'#5c6b7c'},g);
+ ln(312,'dᵢⱼ — обычная длительность работы,  aᵢⱼ — предел её сокращения',{'font-size':13.5,fill:'#5c6b7c'});
+ sec(338,'МЕТОД РЕШЕНИЯ');
+ ln(376,'Симплекс-метод: 20 переменных, решение — доли секунды');
+ sec(402,'РЕЗУЛЬТАТ (на условных цифрах)','#2E9B6A');
+ ln(440,'Сутки — за 22 500 ₸ в день: сортировка −2 ч, курьер −1 ч,',{'font-weight':700,fill:'#17324F'});
+ ln(462,'погрузка, планирование и ожидание рейса — по −0,5 ч. Сборку не трогать.',{'font-weight':700,fill:'#17324F'});
+ tx(330,520,'Что даёт этот расчёт — на следующем листе →',{'font-size':15,'font-weight':800,fill:'#E8642C'},g)}]);
+
+F.push(['Сколько стоит ускорить',()=>{
+ L('','',[]);
+ tx(350,26,'Модель для каждого срока выбирает самые дешёвые меры, которые его сокращают',{'font-size':14,'font-weight':700,fill:'#5c6b7c'});
+ const R=[[28.5,0,'ничего не меняем','',0],[26,10000,'план рейса · погрузка · сортировка на складе','−2,5 ч',0],[24,22500,'+ курьер · немного меньше ожидания рейса','−4,5 ч',1],[22,38500,'+ дополнительные рейсы: ожидание −2,5 ч','−6,5 ч',0],[20,54500,'+ ещё рейсы: ожидание −4,5 ч','−8,5 ч',0]];
+ R.forEach(([t,c,m,d,goal],k)=>{const y=50+k*88;const g=el('g',{});g.style.opacity=0;g.style.transition='opacity .45s';later(()=>g.style.opacity=1,150+k*260);
+  el('rect',{x:10,y,width:680,height:76,rx:12,fill:goal?'#EEF8F2':'#fff',stroke:goal?'#2E9B6A':'#C9D3DE','stroke-width':goal?2.4:1.2},g);
+  tx(70,y+28,fmt(t)+' ч',{'font-size':26,'font-weight':900,fill:goal?'#2E9B6A':'#17324F'},g);
+  tx(70,y+54,goal?'цель: сутки':'срок доставки',{'font-size':12,fill:'#5c6b7c'},g);
+  const bw=c/54500*230;el('rect',{x:140,y:y+16,width:Math.max(bw,3),height:20,rx:4,fill:goal?'#2E9B6A':'#9FB3C8'},g);
+  tx(140+Math.max(bw,3)+8,y+26,c?c.toLocaleString('ru-RU')+' ₸ в день':'0 ₸',{'text-anchor':'start','font-size':15,'font-weight':800},g);
+  tx(140,y+56,m,{'text-anchor':'start','font-size':14,fill:'#33465C'},g);
+  if(d)tx(668,y+28,d,{'text-anchor':'end','font-size':17,'font-weight':800,fill:'#2E9B6A'},g)});
+ const g=el('g',{});g.style.opacity=0;g.style.transition='opacity .5s';later(()=>g.style.opacity=1,1700);
+ el('rect',{x:10,y:496,width:680,height:102,rx:12,fill:'#FDECEA',stroke:'#D64541','stroke-width':2.2},g);
+ tx(30,518,'Ускорить сборку вдвое: +3 000 ₸ в день',{'text-anchor':'start','font-size':17,'font-weight':800,fill:'#B42318'},g);
+ tx(30,544,'Срок: 28,5 ч → 28,5 ч. Не изменился ни на минуту.',{'text-anchor':'start','font-size':15.5,fill:'#33465C'},g);
+ tx(30,566,'Сборка и так успевает к рейсу — это затраты без выигрыша.',{'text-anchor':'start','font-size':14.5,fill:'#33465C'},g);tx(30,586,'Модель такие меры отбрасывает.',{'text-anchor':'start','font-size':14.5,'font-weight':700,fill:'#B42318'},g);
+ tx(668,518,'0 ч',{'text-anchor':'end','font-size':17,'font-weight':800,fill:'#B42318'},g)}]);
+
+F.push(['Каким будет инструмент',()=>{
+ L('Как это будет выглядеть','Каждое утро — один экран',[
+  'Вся эта математика не должна быть видна руководителю. Он видит <b>часы на 24 часа</b>: каждый заказ проходит по ним свой круг — склад, ожидание на рампе, машина, курьер.',
+  'Уложился в сутки — круг замкнулся, зелёный. Не уложился — хвост вылез на второй круг, красный. <b>Каждый круг посчитан по сканам</b> склада и транспорта — данные у вас уже есть.',
+  'А рядом — рекомендации <b>модели оптимизации</b>: что изменить, на сколько часов это сократит путь и сколько стоит. Нажал — и видно, как круг замыкается.',
+  'На следующем листе — живой экран. Нажимайте на кружки заказов и на рекомендации.']);
+ const CX=350,CY=300,R1=210,R2=150,W=36;const pt=(r,h)=>{const a=h/24*2*Math.PI-Math.PI/2;return[CX+r*Math.cos(a),CY+r*Math.sin(a)]};
+ const arc=(r,a,b)=>{const[x0,y0]=pt(r,a),[x1,y1]=pt(r,b);return`M${x0} ${y0} A${r} ${r} 0 ${(b-a)>12?1:0} 1 ${x1} ${y1}`};
+ el('circle',{cx:CX,cy:CY,r:R1,fill:'none',stroke:'#E6ECF2','stroke-width':W});el('circle',{cx:CX,cy:CY,r:R2,fill:'none',stroke:'#FBE3E0','stroke-width':W});
+ const S=[[4,'#2A9D8F'],[5.5,'#D64541'],[14,'#5B5BD6'],[5,'#E8642C']];let h=0;
+ S.forEach(([d,c],k)=>{const s0=h,e0=h+d;h=e0;
+  later(()=>{if(s0<24){const p=el('path',{d:arc(R1,s0+.08,Math.min(e0,24)-.08),fill:'none',stroke:c,'stroke-width':W})}
+   if(e0>24){el('path',{d:arc(R2,Math.max(s0,24)-24+.08,e0-24-.08),fill:'none',stroke:c,'stroke-width':W,opacity:.55})}},300+k*450)});
+ for(let k=0;k<24;k+=3){const[x,y]=pt(R1+W/2+22,k);tx(x,y,k+' ч',{'font-size':13,fill:'#5c6b7c','font-weight':700})}
+ el('circle',{cx:CX,cy:CY,r:R2-W/2-8,fill:'#fff',stroke:'#D64541','stroke-width':3});
+ tx(CX,CY-24,'не укладываемся',{'font-size':15,'font-weight':800,fill:'#D64541'});tx(CX,CY+14,'28,5 ч',{'font-size':46,'font-weight':900,fill:'#D64541'});
+ tx(CX,CY+50,'+4,5 ч сверх цели',{'font-size':13,'font-weight':700,fill:'#D64541'});tx(350,26,'Пример маршрута: целевой срок — 24 часа',{'font-size':14,'font-weight':700,fill:'#5c6b7c'});
+ [['#2A9D8F','склад'],['#D64541','ожидание рейса'],['#5B5BD6','транспорт'],['#E8642C','курьер']].forEach(([c,n],k)=>{el('rect',{x:60+k*150,y:592,width:14,height:14,rx:3,fill:c});tx(80+k*150,599,n,{'text-anchor':'start','font-size':13})})}]);
+
+F.push(['Сутки заказа — живой экран',null,'full']);
+
+F.push(['Предложение',()=>{
+ L('Предложение','Предлагаю посчитать ваш настоящий день',[
+  'Возьмём <b>поток заказов за один реальный день</b> — от поступления до передачи в доставку и вручения.',
+  'За 2–3 дня я построю: <b>карту процесса в BPMN</b> «как есть», <b>сетевой график</b> с вашими реальными временами, <b>критический путь</b> и <b>2–3 варианта оптимизации</b> с расчётом — что даст каждый и что он стоит.',
+  'Этот разбор — бесплатно. Он же станет готовым заданием для ваших аналитиков и программистов: что именно автоматизировать в первую очередь.']);
+ const steps=[['BPMN','кто и что делает'],['Сетевой график','сколько времени'],['Критический путь','где теряется день'],['Варианты','что ускорять и почём']];
+ steps.forEach(([a,b],i)=>{const y=70+i*130;const g=el('g',{});g.style.opacity=0;g.style.transition='opacity .5s';later(()=>g.style.opacity=1,200+i*350);
+  el('rect',{x:120,y,width:460,height:96,rx:14,fill:i==3?'#FFF3EC':'#fff',stroke:i==3?'#E8642C':'#17324F','stroke-width':1.6},g);
+  el('circle',{cx:170,cy:y+48,r:26,fill:i==3?'#E8642C':'#17324F'},g);tx(170,y+48,i+1,{fill:'#fff','font-size':20,'font-weight':900},g);
+  tx(215,y+36,a,{'text-anchor':'start','font-size':21,'font-weight':800},g);tx(215,y+64,b,{'text-anchor':'start','font-size':15,fill:'#5c6b7c'},g);
+  if(i<3)el('line',{x1:350,y1:y+96,x2:350,y2:y+128,stroke:'#17324F','stroke-width':1.6,'marker-end':'url(#ar)'},g)})}]);
+
+F.push(['Обо мне',()=>{
+ L('Обо мне','Сначала понять процесс — потом автоматизировать',[
+  'Мой самый значимый кейс: проектный институт, <b>более 2000 строительных объектов</b> встали — изменились цены, все сметы устарели. Я начал не с компьютеров, а с того, как проект проходит по институту. Через полгода документация по всем объектам ушла строителям.',
+  'По образованию — <b>инженер-системотехник, выпускник МАИ</b>, аспирантура Института кибернетики. Больше 200 компаний, которые я помог привести в систему. Сегодня разрабатываю инструменты автоматизации с применением нейросетей.',
+  'Вы сказали: роботизация требует «точного понимания бизнес-процессов». Это и есть моя работа.']);
+ const g=el('g',{transform:'translate(350,260)'});el('circle',{r:100,fill:'#fff',stroke:'#17324F','stroke-width':3},g);
+ el('image',{href:FACE,x:-86,y:-86,width:172,height:172,'clip-path':'url(#fc)'},g);
+ [['МАИ','инженер-системотехник'],['200+','компаний в системе'],['2000+','объектов за полгода']].forEach(([a,b],i)=>{const x=-230+i*230;
+  el('rect',{x:x-90,y:140,width:180,height:80,rx:12,fill:'#fff',stroke:'#9FB3C8'},g);tx(x,170,a,{'font-size':26,'font-weight':900,fill:'#E8642C'},g);tx(x,200,b,{'font-size':13,fill:'#5c6b7c'},g)})}]);
+
+F.push(['Встреча',()=>{
+ L('Давайте посчитаем','30 минут — и выберем день для разбора',[
+  'Если вам откликнулся такой подход, давайте встретимся на 30 минут. Вы расскажете, где сейчас болит сильнее всего, а я покажу, как построю разбор и какой результат подготовлю.',
+  'Напишите или позвоните.'],
+  `<div style="margin-top:18px"><a class="wa" href="https://wa.me/77017438061" target="_blank">Написать в WhatsApp</a> <span style="font-size:17px;margin-left:12px;font-weight:700">+7 701 743 80 61</span></div><div style="margin-top:16px;font-size:16px;color:#5c6b7c">Мурат Накупов · инженер-системотехник, выпускник МАИ</div>`);
+ const W=BASE.map(w=>w.slice());W[5][3]=3;W[8][3]=1;drawNet(W,{showCrit:true,times:true,names:true});
+ tx(350,40,'Ваш путь заказа — меньше суток',{'font-size':17,'font-weight':800,fill:'#2E9B6A'})}]);
+
+let S=0;
+function show(){T.forEach(clearTimeout);T.length=0;clear();const ifr=document.getElementById('ifr');
+ const full=F[S][2]=='full';ifr.style.display=full?'block':'none';document.getElementById('left').style.display=full?'none':'block';document.getElementById('right').style.display=full?'none':'block';document.getElementById('stamp').style.display=full?'none':'grid';
+ if(full){if(!ifr.dataset.ok){ifr.srcdoc=SUTKI;ifr.dataset.ok=1}}else F[S][1]();
+ document.getElementById('st-t').textContent=F[S][0];document.getElementById('st-n').textContent='Лист '+(S+1)+' / '+F.length;
+ document.getElementById('dots').innerHTML=F.map((f,i)=>`<i class="${i==S?'on':i<S?'done':''}"></i>`).join('')}
+function go(d){S=Math.max(0,Math.min(F.length-1,S+d));show()}
+document.addEventListener('keydown',e=>{if(e.key=='ArrowRight'||e.key==' '){e.preventDefault();go(1)}if(e.key=='ArrowLeft')go(-1)});
+function fit(){const s=Math.min(innerWidth/1300,innerHeight/780);document.getElementById('wrap').style.transform=`translate(-50%,-50%) scale(${s})`}
+addEventListener('resize',fit);fit();show();
+</script></body></html>
